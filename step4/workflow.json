@@ -1,0 +1,189 @@
+{
+  "name": "Step 4 — Meraki-Only Network Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Step 4: Focus the Agent — Meraki Only\n\n**What changed from Step 3:**\n- ❌ Removed: `Get Weather` tool\n- ✅ Agent now has exactly ONE tool: Meraki MCP Client\n\n**Why does this matter?**\nToo many tools reduce agent accuracy. When the LLM must choose from a large, unrelated toolset, it:\n- Wastes tokens evaluating irrelevant tools\n- Occasionally picks the wrong tool\n- Produces less predictable outputs\n\nA focused toolset keeps the agent on-task, fast, and reliable.\n\n**Try asking:**\n- \"What clients are on my network?\"\n- \"Show device status for all access points\"\n- \"What is the weather today?\" ← should now gracefully decline\n- \"List recent config changes in Meraki\"\n\n**This is your production-ready Meraki assistant.**\nStep 5 (optional) adds ThousandEyes for cross-domain correlation.",
+        "height": 500,
+        "width": 420,
+        "color": 7
+      },
+      "id": "9d957f36-3b11-450b-9ff4-54d0da5a0b73",
+      "name": "Sticky Note13",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [384, 80],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Memory\n\n\n\n\n\n\n\n\n\n\n\nAllows agent to store the last few messages in memory to stay on topic. Larger memory allows for longer connected conversations but will consume more tokens.",
+        "height": 372,
+        "width": 308,
+        "color": 7
+      },
+      "id": "6319dcbc-2ecc-4c26-928e-badf70431e0c",
+      "name": "Sticky Note15",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [1200, 304],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Meraki MCP Client\n\n\n\n\n\n\nThe only tool connected to this agent.\n\nThe Meraki MCP Server exposes the full Meraki Dashboard API (~900 endpoints) as agent tools. Examples:\n- `getNetworkClients` — list connected clients\n- `getOrganizationDevicesStatuses` — device health\n- `getNetworkAlertsHistory` — recent alerts\n- `getNetworkConfigurationChanges` — audit log\n\nThis demo uses Selent-AI's open-sourced Meraki MCP wrapper:\nhttps://github.com/selent-ai/selent-mcp",
+        "height": 480,
+        "width": 480,
+        "color": 7
+      },
+      "id": "9f8e818c-5b1a-4c38-8fd0-bae9ac389c6e",
+      "name": "Sticky Note16",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [1600, 264],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Network Agent\n\n## Role\n\nYou are a concise, factual network engineering assistant with access to these tools:\n\n* Meraki (Network Management Platform)\n\n## Behavior\n\n* On the first message only, greet the user and say you can assist with network operations.\n* Never invent information. Only use content found in the tools.\n* Be efficient. Gather only the data needed to answer the question. Do not make exploratory tool calls.\n* Before making a tool call, check if the answer was already retrieved earlier in this conversation.\n* When calling Meraki MCP tools, default to organization ID 3705899543372497758 and network ID L_3705899543372507602, unless otherwise specified.\n\n## Answer Format\n\n* Use bullet points or short paragraphs.\n* Include a section **\"Sources checked:\"** listing the API calls used.\n\n## Edge Cases\n\n* If the user asks about something outside your available tools (e.g. weather, news, external systems), politely say so and suggest they add more data sources to the agent.\n* If you find too little information, say so.\n* If the user asks for opinions or predictions, stay neutral and summarize facts only.\n\n## Date\n\nToday is {{ $today }}\n",
+          "maxIterations": 7
+        }
+      },
+      "id": "45b12d56-5da9-487f-a44d-34b3507eaf7c",
+      "name": "Your First AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [1280, 64],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hello! I'm your network engineering assistant. I have access to your Meraki network. How can I help?",
+        "options": {
+          "inputPlaceholder": "Ask a network question...",
+          "showWelcomeScreen": false,
+          "subtitle": "Step 4: Meraki-only, focused toolset",
+          "title": "Meraki Network Assistant",
+          "responseMode": "lastNode"
+        }
+      },
+      "id": "725b349a-9b2a-4180-97e6-8154cb37aa64",
+      "name": "Example Chat",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [912, 64],
+      "webhookId": "step4-chat-trigger",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 30
+      },
+      "id": "067307a7-9876-415f-87ee-4a59143ff049",
+      "name": "Conversation Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [1312, 352],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 300,
+        "width": 294,
+        "color": 3
+      },
+      "id": "cfcef8a9-3394-432b-adf9-768c15d6fc8f",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [816, 304],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-haiku-4-5-20251001",
+          "mode": "list",
+          "cachedResultName": "Claude Haiku 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [912, 352],
+      "id": "4582990a-d584-4adc-9857-f5ce37194c55",
+      "name": "Any LLM Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "6KVRuOnqbP7XpCZC",
+          "name": "Anthropic account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://selent-mcp-selent-mcp.apps.rcdnailab01.ciscoailabs.com/mcp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [1824, 352],
+      "id": "f5207e2b-36dc-4d73-9de5-f085090cd6c1",
+      "name": "Meraki MCP Client"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Meraki MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "Your First AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Example Chat": {
+      "main": [
+        [
+          {
+            "node": "Your First AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversation Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Your First AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any LLM Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Your First AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}

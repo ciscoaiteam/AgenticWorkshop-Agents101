@@ -1,0 +1,575 @@
+{
+  "name": "ThousandEyes + Meraki MCP — skill-scanner (Python CLI)",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "abf77cd5-fdc5-4a0f-b59f-66a86902dcc1",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -896,
+        144
+      ],
+      "webhookId": "network-ops-chat-trigger"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=Network Agent\n\n# Role\n\nYou are a concise, factual network engineering assistant with access to these tools:\n\n* ThousandEyes (User Endpoint Analytics)\n* Meraki (Network Management Platform)\n\n# Behavior\n\n\n* On the first message only, greet the user and say you can assist with network operations.\n* Never invent information. Only use content found in the tools.\n* Be efficient. Gather only the data needed to answer the question. Do not make exploratory tool calls. \n* Before making a tool call, check if the answer was already retrieved earlier in this conversation.\n* When calling any ThousandEyes MCP tool, you MUST always include \"aid\": \"369116\" in every tool call. Never omit this parameter, even if not explicitly requested.\n* When calling Meraki MCP Tool, default to organization ID 3705899543372497758 and network ID L_3705899543372507602, unless otherwise specified. \n\n\n# Answer Format\n\n* Include a section **“Sources checked:”** listing the API calls used\n\n# Edge Cases\n\n* If you find too little information, say so and suggest adding more data sources to the agent.\n* If the user asks for opinions or predictions, stay neutral and summarize facts only.\n\n# Date\n\nToday is {{ $today }}\n",
+          "maxIterations": 7
+        }
+      },
+      "id": "8e22b1f8-bcde-4530-85a8-8be326444900",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -640,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "sessionKey": "sessionId"
+      },
+      "id": "c421c7c9-6f59-4007-ad9d-321cc4662081",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -592,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🌐 Network Ops AI Agent\n### Meraki + ThousandEyes\n\n**How it works:**\n1. User sends a chat message\n2. AI Agent processes it using the system prompt\n3. Agent calls Meraki and/or ThousandEyes MCP tools as needed\n4. Response is returned to the chat\n\n---\n\n**Example questions to ask:**\n- \"What clients are connected to my network?\"\n- \"Show me firmware versions for all devices\"\n- \"Are there any ThousandEyes alerts?\"\n- \"Troubleshoot the device with hostname <<>>\"\n- \"What are my recent config changes?\"",
+        "height": 736,
+        "width": 320,
+        "color": 4
+      },
+      "id": "bc761a25-f5e4-4f8b-91aa-06a280967f97",
+      "name": "Setup Notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1536,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-haiku-4-5-20251001",
+          "mode": "list",
+          "cachedResultName": "Claude Haiku 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        -1136,
+        464
+      ],
+      "id": "e1542133-623d-4bc1-8dfa-f8a59d54f01f",
+      "name": "Anthropic Chat Model",
+      "alwaysOutputData": false,
+      "retryOnFail": false,
+      "notesInFlow": false,
+      "credentials": {
+        "anthropicApi": {
+          "id": "6KVRuOnqbP7XpCZC",
+          "name": "Anthropic account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://api.thousandeyes.com/mcp",
+        "authentication": "headerAuth",
+        "include": "selected",
+        "includeTools": [
+          "get_account_groups",
+          "search_outages",
+          "list_events",
+          "get_event",
+          "list_endpoint_agents",
+          "list_endpoint_agent_tests",
+          "get_endpoint_agent_metrics"
+        ],
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        400
+      ],
+      "id": "4fb761bf-fe5d-4d54-a2d8-15ae2272f4c0",
+      "name": "ThousandEyes MCP Client",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "2FT3ex5GOfj7xEQb",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## ThousandEyes \nMCP Client\n\n\n\n\n\n\nThe ThousandEyes MCP Server provides access to your enterprise's ThousandEyes data:\n\n* **Core Monitoring**\n  _Get details on test, events, alerts, and outages_\n\n* **Endpoint Monitoring​ nad Network Path Analysis**\n _Get endpoint agent tests and metrics and perform network path analysis_ \n\n* **Advanced Analysis**\n  _Get anomalies and metrics_ \n\n\nhttps://docs.thousandeyes.com/product-documentation/integration-guides/thousandeyes-mcp-server\n\n\n\n\n\n",
+        "height": 480,
+        "width": 400,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -304,
+        384
+      ],
+      "typeVersion": 1,
+      "id": "0006a2e4-700b-481c-8418-9746cc6f32c7",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## LLM Model\n\n\n\n\n\n\n\n\n\n\n\nThe LLM will adopt the persona specified in the system prompt, interpret user messages, determine which MCP tools are needed to gather data, and provide the response. \n\nCan be a cloud service (Claude, GPT, Gemini, etc) or hosted on-prem on a GPU running a local model. \n\n\n\n\n",
+        "height": 464,
+        "width": 400,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1200,
+        384
+      ],
+      "typeVersion": 1,
+      "id": "8d22b411-c073-4724-a7b3-d24fad8fe752",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Memory\n\n\n\n\n\n\n\n\n\n\n\nAllows agent to store the last few messages in memory to stay on topic. Larger memory allows for longer connected conversations but will consume more tokens. \n\n\n\n",
+        "height": 464,
+        "width": 400,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -752,
+        384
+      ],
+      "typeVersion": 1,
+      "id": "8f6753a5-f0c3-4106-a6fa-65eb86638976",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Meraki\nMCP Client\n\n\n\n\n\n\nThe Meraki MCP Server provides access to your enterprise's Meraki environment data:\n\nThe entire Meraki API of nearly 900 endpoints is available as tools. \n\n\n\n\nThis demo uses Selent-AI's open sourced Meraki MCP wrapper: https://github.com/selent-ai/selent-mcp \n\n",
+        "height": 464,
+        "width": 400,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        112,
+        384
+      ],
+      "typeVersion": 1,
+      "id": "ccb034e4-3196-48b8-b790-26c96b8283b1",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://selent-mcp-selent-mcp.apps.rcdnailab01.ciscoailabs.com/mcp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        304,
+        400
+      ],
+      "id": "f5207e2b-36dc-4d73-9de5-f085090cd6c1",
+      "name": "Meraki MCP Client"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "Qwen/Qwen3-Coder-Next"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -976,
+        464
+      ],
+      "id": "6282274d-1a12-43ba-8116-64477c99881a",
+      "name": "Qwen3 Coder LLM",
+      "credentials": {
+        "openAiApi": {
+          "id": "7SOlhMkaxpqjctiK",
+          "name": "QWEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "mcp_servers",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "id": "16a28446-d050-4605-8837-5cde623f2d74",
+      "name": "One item per MCP root",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ($env.SKILL_SCANNER_API_URL || 'http://127.0.0.1:8000').replace(/\\/$/, '') + '/scan' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ skill_directory: $json.skill_root, policy: ($json.skill_scanner || {}).policy || 'balanced', use_behavioral: Boolean(($json.skill_scanner || {}).use_behavioral), use_llm: Boolean(($json.skill_scanner || {}).use_llm), llm_provider: ($json.skill_scanner || {}).llm_provider || 'anthropic', use_virustotal: Boolean(($json.skill_scanner || {}).use_virustotal), use_trigger: Boolean(($json.skill_scanner || {}).use_trigger), enable_meta: Boolean(($json.skill_scanner || {}).enable_meta), use_aidefense: Boolean(($json.skill_scanner || {}).use_aidefense) }) }}",
+        "options": {}
+      },
+      "id": "6e087c83-a890-41c2-8d4c-eb54b86ccaaf",
+      "name": "POST /scan (skill-scanner-api)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -512,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "mcp_skill_scans",
+        "options": {}
+      },
+      "id": "8965bf4f-172f-45ac-aa24-05c46546bc77",
+      "name": "Combine all scan responses",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "mcp-servers-field",
+              "name": "mcp_servers",
+              "type": "array",
+              "value": "={{ [{ id: 'example-skill', skill_root: '/tmp/test-skill' }] }}"
+            },
+            {
+              "id": "skill-scanner-field",
+              "name": "skill_scanner",
+              "type": "object",
+              "value": "={{ { policy: 'balanced', use_behavioral: false, use_llm: false, enable_meta: false } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "13e77761-bb1a-4587-9f69-c104c0ead21e",
+      "name": "Scan input (edit paths)1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -960,
+        1168
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "802ad218-0ec6-4ba7-a08d-fab7992f78c6",
+      "name": "When clicking 'Test workflow'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1152,
+        1440
+      ]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "mcp_servers",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "id": "2a58d21a-00c3-482e-865a-f5757c40a0cf",
+      "name": "One item per MCP root1",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        1424
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ('http://127.0.0.1:8000').replace(/\\/$/, '') + '/scan' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ skill_directory: $json.skill_root, policy: ($json.skill_scanner || {}).policy || 'balanced', use_behavioral: Boolean(($json.skill_scanner || {}).use_behavioral), use_llm: Boolean(($json.skill_scanner || {}).use_llm), llm_provider: ($json.skill_scanner || {}).llm_provider || 'anthropic', use_virustotal: Boolean(($json.skill_scanner || {}).use_virustotal), use_trigger: Boolean(($json.skill_scanner || {}).use_trigger), enable_meta: Boolean(($json.skill_scanner || {}).enable_meta), use_aidefense: Boolean(($json.skill_scanner || {}).use_aidefense) }) }}",
+        "options": {}
+      },
+      "id": "84b45462-7380-4ce0-9de9-0c94b12fd366",
+      "name": "POST /scan (skill-scanner-api)1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -480,
+        1424
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "mcp_skill_scans",
+        "options": {}
+      },
+      "id": "a156e3ce-4f42-4005-a84b-15dcef1b226c",
+      "name": "Combine all scan responses1",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        1424
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "mcp-servers-field",
+              "name": "mcp_servers",
+              "type": "array",
+              "value": "={{ [{ id: 'meraki', mcp_url: 'https://selent-mcp-selent-mcp.apps.rcdnailab01.ciscoailabs.com/mcp', headers: {}, include_tools: [] }] }}"
+            },
+            {
+              "id": "skill-scanner-field",
+              "name": "skill_scanner",
+              "type": "object",
+              "value": "={{ { lenient: true, extra_args: [], base_args: ['--format', 'json', '--compact'] } }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "aedfa840-6375-450a-a54b-3cca865ba862",
+      "name": "Scan input (TE + Meraki MCP)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -960,
+        1440
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chat Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ThousandEyes MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meraki MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qwen3 Coder LLM": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "One item per MCP root": {
+      "main": [
+        [
+          {
+            "node": "POST /scan (skill-scanner-api)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST /scan (skill-scanner-api)": {
+      "main": [
+        [
+          {
+            "node": "Combine all scan responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scan input (edit paths)1": {
+      "main": [
+        [
+          {
+            "node": "One item per MCP root",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking 'Test workflow'": {
+      "main": [
+        [
+          {
+            "node": "Scan input (TE + Meraki MCP)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "One item per MCP root1": {
+      "main": [
+        [
+          {
+            "node": "POST /scan (skill-scanner-api)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST /scan (skill-scanner-api)1": {
+      "main": [
+        [
+          {
+            "node": "Combine all scan responses1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scan input (TE + Meraki MCP)": {
+      "main": [
+        [
+          {
+            "node": "One item per MCP root1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "e5021b46-b89a-41d5-9056-5925a67ee5f8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5e82a517e2de0cb9a6c3da60373a908fe18afe624199280e9da4dd76ff6ba955"
+  },
+  "id": "qQgQ3CC8pmOhODCD",
+  "tags": [
+    {
+      "updatedAt": "2026-04-21T17:41:01.878Z",
+      "createdAt": "2026-04-21T17:41:01.878Z",
+      "id": "FYy6apOCKqBdndJE",
+      "name": "Store"
+    },
+    {
+      "updatedAt": "2026-04-21T17:41:01.884Z",
+      "createdAt": "2026-04-21T17:41:01.884Z",
+      "id": "HTIDDfs4su110MkC",
+      "name": "Agent"
+    },
+    {
+      "updatedAt": "2026-04-21T17:41:01.891Z",
+      "createdAt": "2026-04-21T17:41:01.891Z",
+      "id": "Kt7ijZkUJhEeWDLn",
+      "name": "Tools"
+    },
+    {
+      "updatedAt": "2026-04-21T17:19:54.363Z",
+      "createdAt": "2026-04-21T17:19:54.363Z",
+      "id": "xxsofakfakYnBlub",
+      "name": "Qwen"
+    },
+    {
+      "updatedAt": "2026-04-21T17:41:01.888Z",
+      "createdAt": "2026-04-21T17:41:01.888Z",
+      "id": "zm0X5UPJYr5SW7k2",
+      "name": "MCP"
+    }
+  ]
+}

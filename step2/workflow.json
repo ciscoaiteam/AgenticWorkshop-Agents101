@@ -1,0 +1,249 @@
+{
+  "name": "Step 2 — Weather + Meraki MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Step 2: Replace News with Meraki MCP\n\nYour AI agent can:\n1. **Receive** messages from the chat\n2. **Select** the right tools (weather, Meraki network data)\n3. **Respond** with live, helpful answers\n\n**What changed from Step 1:**\n- ❌ Removed: `Get News` RSS tool\n- ✅ Added: `Meraki MCP Client` — gives the agent access to your entire Meraki network via MCP\n\n**What is MCP?**\nModel Context Protocol is an open standard that lets an agent dynamically discover and call tools from an external server. Unlike a hard-coded HTTP node, the MCP server exposes *many* tools at once — the agent picks the right one.\n\n**Try asking:**\n- \"What clients are connected to my network?\"\n- \"What is the weather in San Jose AND who is connected to the network?\"\n- \"Show me device status for my Meraki network\"\n\n**Open the AI Agent node** to view or edit the System Message.",
+        "height": 500,
+        "width": 420,
+        "color": 7
+      },
+      "id": "9d957f36-3b11-450b-9ff4-54d0da5a0b73",
+      "name": "Sticky Note13",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [384, 80],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\n\n\n\n\n\nThis node helps your agent remember the last few messages to stay on topic.",
+        "height": 372,
+        "width": 308,
+        "color": 7
+      },
+      "id": "6319dcbc-2ecc-4c26-928e-badf70431e0c",
+      "name": "Sticky Note15",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [1200, 304],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Tools\n\n\n\n\n\n\n\n\n\n\n\n\nThese tools let your agent access real-world data.\n\n**Get Weather** — calls open-meteo.com (free, no key needed)\n\n**Meraki MCP Client** — connects to the Meraki MCP server and exposes the full Meraki API as agent tools. The agent discovers which Meraki tool to use automatically.",
+        "height": 560,
+        "width": 540,
+        "color": 7
+      },
+      "id": "9f8e818c-5b1a-4c38-8fd0-bae9ac389c6e",
+      "name": "Sticky Note16",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [1600, 264],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "toolDescription": "Get weather forecast anywhere, anytime. You can make requests by assuming most information, the only thing you need is the location (use the city name to infer lat and long automatically) and time period (assume today if not specified)",
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "latitude",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `Latitude of the location, e.g. 45.75 for Lyon. Do not ask the user just infer it automatically.`, 'string') }}"
+            },
+            {
+              "name": "longitude",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Longitude of the location, e.g. 4.85 for Lyon. Do not ask the user just infer it automatically.`, 'string') }}"
+            },
+            {
+              "name": "current",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `Comma-separated list of current weather variables (no whitespace).\n\nExample: temperature_2m,windspeed_10m,rain.\n\nOptions: temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weathercode,cloudcover_total,pressure_msl,surface_pressure,windspeed_10m,winddirection_10m,windgusts_10m.`, 'string') }}"
+            },
+            {
+              "name": "hourly",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', `Comma-separated list of hourly weather variables (no whitespace). Hourly is only useful to get one day's information. For weakly overview please use daily.\n\nExample: temperature_2m,precipitation.\n\nOptions: temperature_2m,relative_humidity_2m,dewpoint_2m,apparent_temperature,precipitation,rain,showers,snowfall,snow_depth,pressure_msl,surface_pressure,cloudcover_total,cloudcover_low,cloudcover_mid,cloudcover_high,windspeed_10m,winddirection_10m,windgusts_10m,visibility,is_day,sunshine_duration,soil_temperature,soil_moisture,PM10,PM2_5,carbon_monoxide,ozone,us_aqi,UV_index.`, 'string') }}"
+            },
+            {
+              "name": "daily",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters4_Value', `Comma-separated list of daily weather variables (no whitespace).\n\nExample: temperature_2m_max,precipitation_sum.\n\nOptions: weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,rain_sum,showers_sum,snowfall_sum,precipitation_hours,sunrise,sunset,daylight_duration,sunshine_duration,pressure_msl_max,pressure_msl_min,surface_pressure_max,surface_pressure_min,windgusts_10m_max,windspeed_10m_max,winddirection_10m_dominant,shortwave_radiation_sum.`, 'string') }}"
+            },
+            {
+              "name": "start_date",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters5_Value', `Start date in YYYY-MM-DD format. Example: 2025-07-15`, 'string') }}"
+            },
+            {
+              "name": "end_date",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters6_Value', `End date in YYYY-MM-DD format. Must be after start_date. Example: 2025-07-18`, 'string') }}"
+            },
+            {
+              "name": "temperature_unit",
+              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters7_Value', `Unit for temperature. Options: celsius (default), fahrenheit.`, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f1626282-6f3f-4853-b1d6-051e8d0bafc0",
+      "name": "Get Weather",
+      "type": "n8n-nodes-base.httpRequestTool",
+      "position": [1632, 352],
+      "notesInFlow": true,
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=<role>\nYou are the n8n Demo AI Agent, a friendly and helpful assistant designed to showcase the power of AI agents within the n8n automation platform. Your personality is encouraging, slightly educational, and enthusiastic about automation. Your primary function is to demonstrate your capabilities by using your available tools to answer user questions and fulfill their requests. You are conversational.\n</role>\n\n<instructions>\n<goal>\nYour primary goal is to act as a live demonstration of an AI Agent built with n8n. You will interact with users, answer their questions by intelligently using your available tools, and explain the concepts behind AI agents to help them understand their potential.\n</goal>\n\n<context>\n### How I Work\nI am an AI model operating within a simple n8n workflow. This workflow gives me two key things:\n1.  **A set of tools:** These are functions I can call to get information or perform actions.\n2.  **Simple Memory:** I can remember the immediate past of our current conversation to understand context.\n\n### My Tools Instructions\nYou must choose one of your available tools if the user's request matches its capability. You cannot perform these actions yourself; you must call the tool.\n\n### Current Date & Time\n{{ $now }}\n</context>\n\n<output_format>\n- Respond in a friendly, conversational, and helpful tone.\n- When a user's request requires a tool, first select the appropriate tool. Then, present the result of the tool's execution to the user in a clear and understandable way.\n- Be proactive. If the user is unsure what to do, suggest some examples of what they can ask you based on your available tools.\n</output_format>\n</instructions>"
+        }
+      },
+      "id": "45b12d56-5da9-487f-a44d-34b3507eaf7c",
+      "name": "Your First AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [1280, 64],
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋",
+        "options": {
+          "inputPlaceholder": "Type your message here...",
+          "showWelcomeScreen": false,
+          "subtitle": "Step 2: Weather + Meraki MCP",
+          "title": "Step 2 — Weather + Meraki Agent",
+          "responseMode": "lastNode"
+        }
+      },
+      "id": "725b349a-9b2a-4180-97e6-8154cb37aa64",
+      "name": "Example Chat",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [912, 64],
+      "webhookId": "step2-chat-trigger",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 30
+      },
+      "id": "067307a7-9876-415f-87ee-4a59143ff049",
+      "name": "Conversation Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "position": [1312, 352],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 300,
+        "width": 294,
+        "color": 3
+      },
+      "id": "cfcef8a9-3394-432b-adf9-768c15d6fc8f",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [816, 304],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-haiku-4-5-20251001",
+          "mode": "list",
+          "cachedResultName": "Claude Haiku 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [912, 352],
+      "id": "4582990a-d584-4adc-9857-f5ce37194c55",
+      "name": "Any LLM Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "6KVRuOnqbP7XpCZC",
+          "name": "Anthropic account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://selent-mcp-selent-mcp.apps.rcdnailab01.ciscoailabs.com/mcp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [1824, 352],
+      "id": "f5207e2b-36dc-4d73-9de5-f085090cd6c1",
+      "name": "Meraki MCP Client"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Weather": {
+      "ai_tool": [
+        [
+          {
+            "node": "Your First AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meraki MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "Your First AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Example Chat": {
+      "main": [
+        [
+          {
+            "node": "Your First AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversation Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Your First AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any LLM Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Your First AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
