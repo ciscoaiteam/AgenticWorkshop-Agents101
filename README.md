@@ -121,6 +121,17 @@ Agentic101/
 │   ├── README.md
 │   └── workflow.json
 └── ExtraCredit/
-    └── MCP_SCANNER.md   ← Scan MCP servers for security threats
+    ├── WEBHOOK_AGENT.md     ← Trigger an agent from any external event (no chat required)
+    ├── webhook-agent.json   ← N8N workflow for the webhook agent
+    └── MCP_SCANNER.md       ← Scan MCP servers for security threats
 ```
+
+---
+
+## Extra Credit Assignments
+
+| Assignment | Concept | Files |
+|---|---|---|
+| [Webhook-Triggered Agent](ExtraCredit/WEBHOOK_AGENT.md) | Agents run autonomously from external events, not just chat | `ExtraCredit/WEBHOOK_AGENT.md` + `webhook-agent.json` |
+| [MCP Security Scanner](ExtraCredit/MCP_SCANNER.md) | Scan MCP servers for prompt injection and tool poisoning | `ExtraCredit/MCP_SCANNER.md` + `scan-mcps.sh` |
 

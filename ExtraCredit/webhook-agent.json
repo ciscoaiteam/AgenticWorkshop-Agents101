@@ -1,0 +1,230 @@
+{
+  "name": "Extra Credit — Webhook-Triggered Autonomous Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Extra Credit: Webhook-Triggered Autonomous Agent\n\n**The key idea:** Agentic workflows are not just chatbots.\nSwap the Chat Trigger for a Webhook Trigger — now any external system can kick off an AI-powered investigation with no human in the loop.\n\n**Trigger sources (anything that can send an HTTP POST):**\n- `curl` from a terminal\n- Meraki alert webhooks\n- ThousandEyes alert webhooks\n- A cron job / scheduled script\n- Any monitoring platform\n- CI/CD pipeline\n\n**Flow:**\n1. External system sends HTTP POST with event payload\n2. AI Agent reads the payload as its task\n3. Agent queries MCP tools for additional context\n4. Agent returns structured analysis as HTTP response\n\n---\n\n**Example curl trigger:**\n```\ncurl -X POST -H \"Content-Type: application/json\" \\\n  -d '{\"alertType\": \"Access point went down\", \"deviceName\": \"Main-AP-01\"}' \\\n  <YOUR-WEBHOOK-URL>\n```\n\nSee WEBHOOK_AGENT.md for full exercises.",
+        "height": 700,
+        "width": 420,
+        "color": 4
+      },
+      "id": "ec101-sticky-main",
+      "name": "Setup Notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-1280, 64]
+    },
+    {
+      "parameters": {
+        "content": "## Webhook Trigger\n\n\n\n\n\n\n\n\n\n\n\nReceives HTTP POST requests from any external system.\n\n**After activating the workflow**, copy the **Production URL** from this node and use it as your webhook endpoint.\n\nThe entire JSON body of the POST request is passed to the AI Agent as the event to investigate.",
+        "height": 480,
+        "width": 380,
+        "color": 7
+      },
+      "id": "ec101-sticky-webhook",
+      "name": "Sticky Note Webhook",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-800, 304]
+    },
+    {
+      "parameters": {
+        "content": "## AI Agent\n\n\n\n\n\n\n\n\n\n\n\nSame agent node as the chat steps — only the trigger is different.\n\nThe system prompt injects the webhook payload as context. The agent analyzes the event and calls MCP tools to investigate.\n\nNote the `maxIterations: 5` cap — important for autonomous agents to prevent runaway tool calls.",
+        "height": 480,
+        "width": 380,
+        "color": 7
+      },
+      "id": "ec101-sticky-agent",
+      "name": "Sticky Note Agent",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-368, 304]
+    },
+    {
+      "parameters": {
+        "content": "## Respond to Webhook\n\n\n\n\n\n\n\n\n\n\n\nSends the agent's analysis back as the HTTP response to the caller.\n\nThis closes the loop: the external system (curl, Meraki, ThousandEyes, etc.) receives the AI's structured investigation report as the HTTP response body.\n\n**Going further:** Replace or augment this node with:\n- Webex / Teams message\n- ITSM ticket creation\n- Email notification\n- Conditional routing (If node)",
+        "height": 480,
+        "width": 380,
+        "color": 7
+      },
+      "id": "ec101-sticky-respond",
+      "name": "Sticky Note Respond",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [48, 304]
+    },
+    {
+      "parameters": {
+        "content": "## Meraki MCP Client\n\n\n\n\n\n\nSame Meraki MCP server from the main workshop steps.\n\nThe agent uses this to look up device status, clients, alerts, and config changes relevant to the incoming event.\n\nAdd ThousandEyes or other MCP clients here to expand autonomous investigation scope.",
+        "height": 480,
+        "width": 380,
+        "color": 7
+      },
+      "id": "ec101-sticky-meraki",
+      "name": "Sticky Note Meraki",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [464, 304]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "network-alert",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "ec101-webhook",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-720, 144],
+      "webhookId": "extra-credit-network-alert"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Autonomous Network Operations Agent\n\n## Role\n\nYou are an autonomous network operations agent. You have been triggered by an external event or alert — there is no human in the conversation. Analyze the incoming event payload and investigate using your available tools.\n\n## Incoming Event Payload\n\n```json\n{{ JSON.stringify($('Webhook Trigger').item.json.body || $('Webhook Trigger').item.json, null, 2) }}\n```\n\n## Behavior\n\n* Analyze the event payload above and determine what happened.\n* If the event references a device, client, serial number, or network element, look it up in Meraki.\n* If the event references an endpoint agent or network path issue, look it up in ThousandEyes (if available).\n* Never invent information. Only use data from the event payload and your MCP tools.\n* Be efficient — make only the tool calls needed to answer the event. Do not explore speculatively.\n* When calling Meraki MCP tools, default to organization ID 3705899543372497758 and network ID L_3705899543372507602, unless the event payload specifies otherwise.\n* When calling any ThousandEyes MCP tool, always include \"aid\": \"369116\".\n\n## Output Format\n\nStructure your response exactly as follows:\n\n**Event Summary:** One sentence describing what was received.\n\n**Investigation:**\nWhat you found using your tools. If no tools were needed, explain why.\n\n**Assessment:**\nYour conclusion — is this a real issue? What is the likely cause?\n\n**Recommended Action:**\nWhat should happen next (investigate further, page on-call, no action needed, etc.).\n\n**Sources checked:** List every MCP/API call made.\n\n## Date\n\nToday is {{ $today }}\n",
+          "maxIterations": 5
+        }
+      },
+      "id": "ec101-agent",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [-368, 144]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.output }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/plain; charset=utf-8"
+              }
+            ]
+          }
+        }
+      },
+      "id": "ec101-respond",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [48, 144]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-haiku-4-5-20251001",
+          "mode": "list",
+          "cachedResultName": "Claude Haiku 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [-560, 464],
+      "id": "ec101-llm",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "6KVRuOnqbP7XpCZC",
+          "name": "Anthropic account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionKey": "sessionId"
+      },
+      "id": "ec101-memory",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [-368, 464]
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://selent-mcp-selent-mcp.apps.rcdnailab01.ciscoailabs.com/mcp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [464, 464],
+      "id": "ec101-meraki",
+      "name": "Meraki MCP Client"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Meraki MCP Client": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "tags": []
+}
