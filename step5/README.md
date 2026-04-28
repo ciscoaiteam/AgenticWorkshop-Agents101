@@ -47,22 +47,17 @@ For focused, domain-specific agents like this network assistant, a smaller 9B-pa
 
 ### Setup — Import the Pre-Built Workflow
 
-1. In N8N, create a new workflow.
+1. In the workshop N8N instance, create a new workflow.
 2. Import `workflow.json` from this folder.
-3. Configure the **`Qwen3 LLM (on-prem)`** node:
-   - This uses an **OpenAI-compatible API** credential (N8N node type: `lmChatOpenAi`)
-   - Set the **Base URL** to your on-prem inference server endpoint (e.g., `http://your-gpu-server:8000/v1`)
-   - Set the **Model** to `Qwen/Qwen3.5-9B` (or the model name your server uses)
-   - The `Anthropic Chat Model` node is kept but disconnected — use it to A/B test responses
-4. Save and Activate.
+3. If prompted about missing credentials, select the pre-configured shared credentials from the dropdown — the **QWEN** credential for the Qwen node and the **Anthropic** credential for the Claude node.
+4. The `Anthropic Chat Model` node is kept but disconnected — use it to A/B test responses.
+5. Save and Activate.
 
 ### Setup — Manual Edit from Step 4
 
 1. In your Step 4 workflow, click **"+"** to add a new node.
 2. Search for **OpenAI Chat Model** (N8N uses this type for any OpenAI-compatible API).
-3. In the node settings:
-   - **Base URL:** your on-prem inference endpoint
-   - **Model:** `Qwen/Qwen3.5-9B`
+3. In the node settings, select the pre-configured **QWEN** credential.
 4. Draw a wire from `Qwen3 LLM` → Agent's **AI Language Model** input.
 5. Disconnect the existing Claude wire (click it, press Delete).
 6. Keep the Claude node on the canvas but unconnected — you will A/B test with it later.
@@ -90,7 +85,7 @@ These endpoints are internal to the lab cluster (`svc.cluster.local`). In your o
 1. Click **"+"** in the canvas.
 2. Search for **MCP Client Tool** and select it.
 3. Set the **MCP Endpoint URL** to the endpoint from the table above.
-4. No authentication is required for the lab servers. Add **Header Auth** or **Bearer Token** if your environment requires it.
+4. No authentication is required — these servers are internal to the workshop environment.
 5. Connect the node → Agent's **Tools** input.
 6. Repeat for all three new servers.
 

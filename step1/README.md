@@ -35,11 +35,12 @@ Every agentic workflow has five core components:
 
 ## Setup
 
-1. In N8N, click **"+"** to create a new workflow.
-2. Click the menu (three dots, top right) → **Import from file**.
-3. Upload `workflow.json` from this folder.
-4. N8N will prompt you to configure a credential for the **LLM model node** — connect your Anthropic or OpenAI API key.
-5. Click **Save**, then **Activate** the workflow.
+1. Log in to the workshop N8N instance (URL and credentials provided by your facilitator).
+2. Click **"+"** to create a new workflow.
+3. Click the menu (three dots, top right) → **Import from file**.
+4. Upload `workflow.json` from this folder.
+5. If prompted about a missing credential, select the pre-configured shared credential from the dropdown.
+6. Click **Save**, then **Activate** the workflow.
 
 ---
 

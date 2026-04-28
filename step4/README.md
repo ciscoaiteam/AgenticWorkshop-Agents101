@@ -39,9 +39,9 @@ In Step 3, the agent had two tools: `Get Weather` and `Meraki MCP Client`. For a
 
 ### Option A — Import the Pre-Built Workflow
 
-1. In N8N, create a new workflow.
+1. In the workshop N8N instance, create a new workflow.
 2. Import `workflow.json` from this folder.
-3. Configure your LLM credential.
+3. If prompted about a missing credential, select the pre-configured shared credential from the dropdown.
 4. Save and Activate.
 
 ### Option B — Edit Your Step 3 Workflow Manually

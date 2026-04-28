@@ -42,10 +42,10 @@ The agent persona stays the same for now — that changes in Step 3.
 
 ### Option A — Import the Pre-Built Workflow
 
-1. In N8N, create a new workflow.
+1. In the workshop N8N instance, create a new workflow.
 2. Import `workflow.json` from this folder.
-3. Configure your LLM credential (Claude or GPT).
-4. The `Meraki MCP Client` node does not require authentication for this workshop environment. If you are connecting to a secured Meraki MCP server, add a **Header Auth** credential with your API key.
+3. If prompted about a missing credential, select the pre-configured shared credential from the dropdown.
+4. The `Meraki MCP Client` node requires no authentication in this workshop environment.
 5. Save and Activate.
 
 ### Option B — Modify Your Step 1 Workflow Manually

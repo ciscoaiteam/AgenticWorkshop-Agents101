@@ -41,29 +41,33 @@ Bot                               only)       Intersight
 ## Prerequisites
 
 ### N8N
-- An active [N8N Cloud](https://n8n.io/) account (free trial works)
+- Access to the workshop's **N8N on-premise instance** — your facilitator will provide the URL and login credentials
 - Basic familiarity with dragging nodes on a canvas
 
-### API Credentials
-You will need at least one LLM credential configured in N8N:
+### Credentials
+All API credentials are **pre-configured** in the workshop environment. You do not need to supply your own API keys. The following are already set up for you:
 
-| Provider | Where to get a key |
+| Credential | Used for |
 |---|---|
-| Anthropic (Claude) | [console.anthropic.com](https://console.anthropic.com/) |
-| OpenAI (GPT) | [platform.openai.com](https://platform.openai.com/) |
+| Anthropic (Claude Haiku) | LLM for Steps 1–4 and Step 6 |
+| Qwen3.5-9B (on-prem) | LLM for Step 5 |
+| Meraki MCP server | Steps 2–5 |
+| ThousandEyes bearer token | Steps 5–6 |
+| Nexus / Intersight / ITSM MCP servers | Step 5 (internal lab cluster) |
 
-For Steps 2–4 you will also need access to the **Meraki MCP server**. For Step 5 you will need a **ThousandEyes bearer token**. For Step 6 you will need access to the **on-premises inference server** (vLLM/Ollama running Qwen3.5-9B) and the lab's internal Nexus, Intersight, and ITSM MCP servers.
+If a node shows a credential error after import, ask your facilitator to re-link the shared credential.
 
 ---
 
 ## How to Import a Workflow into N8N
 
-1. In your N8N instance, click **"+"** to create a new workflow.
-2. In the top-right menu (three dots), select **Import from file**.
-3. Upload the `workflow.json` from the relevant step folder.
-4. Configure any credentials prompted by N8N (LLM model, auth headers).
-5. Click **Save**, then **Activate** the workflow.
-6. Open the **Chat** panel and start asking questions.
+1. Log in to the workshop N8N instance using the URL and credentials provided by your facilitator.
+2. Click **"+"** to create a new workflow.
+3. In the top-right menu (three dots), select **Import from file**.
+4. Upload the `workflow.json` from the relevant step folder.
+5. If prompted about missing credentials, select the matching shared credential from the dropdown — do not create new ones.
+6. Click **Save**, then **Activate** the workflow.
+7. Open the **Chat** panel and start asking questions.
 
 ---
 

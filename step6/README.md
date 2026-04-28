@@ -67,21 +67,15 @@ Selecting a subset of tools keeps the agent focused and avoids token overhead fr
 
 ### Prerequisites
 
-You need a ThousandEyes API bearer token. Get one from:
-1. Log in to [app.thousandeyes.com](https://app.thousandeyes.com)
-2. Go to **Account Settings → Users and Roles → User API Tokens**
-3. Generate a new token
+The ThousandEyes API bearer token is **pre-configured** in the workshop environment as a shared Header Auth credential. You do not need to generate your own.
 
 ### Option A — Import the Pre-Built Workflow
 
-1. In N8N, create a new workflow.
+1. In the workshop N8N instance, create a new workflow.
 2. Import `workflow.json` from this folder.
-3. Configure your LLM credential (Anthropic or OpenAI).
-4. For `ThousandEyes MCP Client`, add a **Header Auth** credential:
-   - Header name: `Authorization`
-   - Header value: `Bearer YOUR_TOKEN_HERE`
-5. The `Meraki MCP Client` requires no auth for this workshop environment.
-6. Save and Activate.
+3. If prompted about missing credentials, select the pre-configured shared credentials from the dropdown — the **Anthropic** credential for the LLM node and the **Header Auth** credential for the ThousandEyes MCP Client.
+4. The `Meraki MCP Client` requires no authentication.
+5. Save and Activate.
 
 ### Option B — Edit Your Step 4 (or Step 5) Workflow Manually
 
@@ -90,8 +84,7 @@ You need a ThousandEyes API bearer token. Get one from:
 2. Search for **MCP Client Tool** and select it.
 3. In the node settings:
    - **MCP Endpoint URL:** `https://api.thousandeyes.com/mcp`
-   - **Authentication:** Header Auth
-   - Add your `Authorization: Bearer <token>` credential
+   - **Authentication:** Header Auth — select the pre-configured **Header Auth** credential from the dropdown
    - Under **Include Tools**, select: `get_account_groups`, `search_outages`, `list_events`, `get_event`, `list_endpoint_agents`, `list_endpoint_agent_tests`, `get_endpoint_agent_metrics`
 4. Connect `ThousandEyes MCP Client` → Agent's **Tools** input.
 
