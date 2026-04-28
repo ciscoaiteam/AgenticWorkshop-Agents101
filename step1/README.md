@@ -10,13 +10,15 @@ A traditional automation runs a fixed sequence of steps — A → B → C. An **
 
 Every agentic workflow has five core components:
 
-| Component | Role | Node in this workflow |
-|---|---|---|
-| **Input** | Accepts the user's message | `Example Chat` (Chat Trigger) |
-| **Agent** | Reasons, plans, decides which tools to use | `Your First AI Agent` |
-| **LLM** | The language model that powers the agent's thinking | `Any LLM Chat Model` (Claude Haiku) |
-| **Memory** | Stores recent conversation turns for context | `Conversation Memory` (Window Buffer) |
-| **Tools** | External capabilities the agent can call | `Get Weather` + `Get News` |
+
+| Component  | Role                                                | Node in this workflow                 |
+| ---------- | --------------------------------------------------- | ------------------------------------- |
+| **Input**  | Accepts the user's message                          | `Example Chat` (Chat Trigger)         |
+| **Agent**  | Reasons, plans, decides which tools to use          | `Your First AI Agent`                 |
+| **LLM**    | The language model that powers the agent's thinking | `Any LLM Chat Model` (Claude Haiku)   |
+| **Memory** | Stores recent conversation turns for context        | `Conversation Memory` (Window Buffer) |
+| **Tools**  | External capabilities the agent can call            | `Get Weather` + `Get News`            |
+
 
 ```
 [Example Chat]
@@ -52,6 +54,7 @@ What should I wear to visit San Francisco today?
 ```
 
 Watch the execution panel on the right. You will see:
+
 - The agent receiving your message
 - The `Get Weather` tool being called with San Francisco's coordinates
 - The agent composing a clothing recommendation from the weather data
@@ -93,6 +96,7 @@ Observe: the agent can no longer access news and will either say so or attempt t
 3. Read the persona: it describes the agent as a friendly n8n demo assistant.
 
 The persona controls:
+
 - What the agent thinks its job is
 - What tone it uses
 - What rules it follows

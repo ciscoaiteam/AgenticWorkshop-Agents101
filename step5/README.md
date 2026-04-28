@@ -1,38 +1,35 @@
-# Step 5 (Optional) — Add ThousandEyes MCP
+# Step 5 — On-Prem LLM (Qwen) + Additional MCP Servers
 
-**Goal:** Add ThousandEyes endpoint visibility alongside Meraki for end-to-end network and user experience monitoring in a single agent.
+**Goal:** Replace the cloud LLM with an on-premises model for data privacy, and expand the agent's capabilities with three additional MCP servers covering data center switching, compute infrastructure, and IT service management.
 
 ---
 
-## Background: Why ThousandEyes + Meraki?
+## Background: Why Run an LLM On-Premises?
 
-Meraki tells you what the **network** is doing:
-- Which devices are connected
-- What the configuration looks like
-- What alerts the infrastructure has raised
+In every step so far, your conversations have been processed by a cloud API (Anthropic Claude). Every message you send — and every tool response the agent receives — is transmitted to Anthropic's servers for inference.
 
-ThousandEyes tells you what **users and endpoints** are experiencing:
-- Whether a specific endpoint agent can reach the internet
-- Where packet loss or latency is occurring on the network path
-- What events or outages have been detected from the user's perspective
+For many enterprise network operations scenarios, this is a concern:
 
-Together, they give you a complete picture:
+- **Sensitive data in tool responses:** client MAC addresses, IP allocations, device hostnames, firmware versions, incident tickets, and change records all pass through the LLM
+- **Compliance and data sovereignty:** some regulated environments prohibit sending operational data to third-party cloud APIs
+- **Cost at scale:** cloud API pricing scales with token volume; large toolsets generate large tool responses
 
-```
-User reports: "The internet feels slow"
-                        │
-          ┌─────────────┴──────────────┐
-          ▼                            ▼
-   ThousandEyes                      Meraki
-   "Endpoint shows 12% packet       "AP is healthy,
-    loss to the ISP hop"             uplink is saturated"
-          └─────────────┬──────────────┘
-                        ▼
-         Correlated Answer: "ISP-side issue,
-          not your access point"
-```
+**On-premises LLMs** solve this by running the model inside your own infrastructure. No data leaves your perimeter.
 
-This kind of cross-domain correlation is where agentic workflows genuinely shine — the agent can pull from both tools in a single turn and synthesize an answer a human would take much longer to piece together.
+---
+
+## The Tradeoff: Capability vs. Privacy
+
+| | Cloud LLM (Claude Haiku) | On-Prem LLM (Qwen3.5-9B) |
+|---|---|---|
+| **Data privacy** | Data sent to Anthropic | All data stays on-prem |
+| **Context window** | 200K tokens | ~8K–32K tokens (model-dependent) |
+| **Response speed** | Fast (Anthropic's infrastructure) | Depends on your GPU |
+| **Reasoning quality** | Higher (larger model) | Good for focused tasks |
+| **Cost** | Per-token API pricing | Fixed infrastructure cost |
+| **Model updates** | Automatic | Manual |
+
+For focused, domain-specific agents like this network assistant, a smaller 9B-parameter model performs well — especially when the system prompt and toolset are tightly scoped.
 
 ---
 
@@ -40,162 +37,215 @@ This kind of cross-domain correlation is where agentic workflows genuinely shine
 
 | Before (Step 4) | After (Step 5) |
 |---|---|
-| Tools: `Meraki MCP Client` only | Tools: `ThousandEyes MCP Client` + `Meraki MCP Client` |
-| Persona: Meraki only | Persona: Meraki + ThousandEyes, with `aid` rule |
+| LLM: Claude Haiku (cloud) | LLM: Qwen3.5-9B (on-prem) |
+| Tools: Meraki only | Tools: Meraki + Nexus + Intersight + ITSM + ThousandEyes |
+| Persona: Meraki only | Persona: 5 tools listed |
 
 ---
 
-## ThousandEyes MCP Tools Enabled
+## Part 1 — Swap to Qwen On-Premise LLM
 
-This workflow enables a curated subset of ThousandEyes tools (not the full catalog):
-
-| Tool | What it does |
-|---|---|
-| `get_account_groups` | Lists ThousandEyes account groups (use to get the `aid`) |
-| `search_outages` | Searches for detected outages in a time range |
-| `list_events` | Lists events (alerts, anomalies) |
-| `get_event` | Gets details on a specific event |
-| `list_endpoint_agents` | Lists all endpoint agents registered in the account |
-| `list_endpoint_agent_tests` | Lists scheduled tests for an endpoint agent |
-| `get_endpoint_agent_metrics` | Gets performance metrics (latency, loss) for an endpoint |
-
-Selecting a subset of tools keeps the agent focused and avoids token overhead from tools it will never need in this context.
-
----
-
-## Setup
-
-### Prerequisites
-
-You need a ThousandEyes API bearer token. Get one from:
-1. Log in to [app.thousandeyes.com](https://app.thousandeyes.com)
-2. Go to **Account Settings → Users and Roles → User API Tokens**
-3. Generate a new token
-
-### Option A — Import the Pre-Built Workflow
+### Setup — Import the Pre-Built Workflow
 
 1. In N8N, create a new workflow.
 2. Import `workflow.json` from this folder.
-3. Configure your LLM credential (Anthropic or OpenAI).
-4. For `ThousandEyes MCP Client`, add a **Header Auth** credential:
-   - Header name: `Authorization`
-   - Header value: `Bearer YOUR_TOKEN_HERE`
-5. The `Meraki MCP Client` requires no auth for this workshop environment.
-6. Save and Activate.
+3. Configure the **`Qwen3 LLM (on-prem)`** node:
+   - This uses an **OpenAI-compatible API** credential (N8N node type: `lmChatOpenAi`)
+   - Set the **Base URL** to your on-prem inference server endpoint (e.g., `http://your-gpu-server:8000/v1`)
+   - Set the **Model** to `Qwen/Qwen3.5-9B` (or the model name your server uses)
+   - The `Anthropic Chat Model` node is kept but disconnected — use it to A/B test responses
+4. Save and Activate.
 
-### Option B — Edit Your Step 4 Workflow Manually
+### Setup — Manual Edit from Step 4
 
-**Add the ThousandEyes MCP Client:**
-1. Click the **"+"** (add node) button in the canvas.
-2. Search for **MCP Client Tool** and select it.
+1. In your Step 4 workflow, click **"+"** to add a new node.
+2. Search for **OpenAI Chat Model** (N8N uses this type for any OpenAI-compatible API).
 3. In the node settings:
-   - **MCP Endpoint URL:** `https://api.thousandeyes.com/mcp`
-   - **Authentication:** Header Auth
-   - Add your `Authorization: Bearer <token>` credential
-   - Under **Include Tools**, select: `get_account_groups`, `search_outages`, `list_events`, `get_event`, `list_endpoint_agents`, `list_endpoint_agent_tests`, `get_endpoint_agent_metrics`
-4. Connect `ThousandEyes MCP Client` → Agent's **Tools** input.
+   - **Base URL:** your on-prem inference endpoint
+   - **Model:** `Qwen/Qwen3.5-9B`
+4. Draw a wire from `Qwen3 LLM` → Agent's **AI Language Model** input.
+5. Disconnect the existing Claude wire (click it, press Delete).
+6. Keep the Claude node on the canvas but unconnected — you will A/B test with it later.
 
-**Update the system prompt:**
-1. Double-click the AI Agent node.
-2. Add these lines to the Behavior section of the System Message:
+### What is an OpenAI-Compatible API?
+
+Most on-premises LLM runtimes (vLLM, Ollama, LM Studio, llama.cpp server) expose an API that mimics the OpenAI `/v1/chat/completions` endpoint. N8N's OpenAI Chat Model node works with any of these without code changes — just point it at a different base URL.
+
+---
+
+## Part 2 — Add Three New MCP Servers
+
+### The New MCP Servers
+
+| MCP Server | Endpoint | What it provides |
+|---|---|---|
+| **Nexus** | `http://mcp-nexus.n8n-lab.svc.cluster.local:8011/mcp` | Cisco Nexus switch config, VLANs, topology |
+| **Intersight** | `http://mcp-intersight.n8n-lab.svc.cluster.local:8010/mcp` | UCS server inventory, firmware, hardware health |
+| **ITSM** | `http://mcp-itsm.n8n-lab.svc.cluster.local:8012/mcp` | Change requests, incidents, knowledge base |
+
+These endpoints are internal to the lab cluster (`svc.cluster.local`). In your own environment, replace with your actual MCP server URLs.
+
+### Adding Each MCP Client (repeat for all three)
+
+1. Click **"+"** in the canvas.
+2. Search for **MCP Client Tool** and select it.
+3. Set the **MCP Endpoint URL** to the endpoint from the table above.
+4. No authentication is required for the lab servers. Add **Header Auth** or **Bearer Token** if your environment requires it.
+5. Connect the node → Agent's **Tools** input.
+6. Repeat for all three new servers.
+
+### Update the System Prompt
+
+Open the AI Agent node and update the Role section to list all 5 tools:
 
 ```
-* When calling any ThousandEyes MCP tool, you MUST always include "aid": "369116"
-  in every tool call. Never omit this parameter.
-```
+You are a concise, factual network engineering assistant with access to these MCP Servers:
 
-3. Update the Role section to mention ThousandEyes.
-4. Save.
+* ThousandEyes (User Endpoint Analytics)
+* Meraki (Campus Network Management Platform)
+* Nexus (Data Center switching management)
+* Intersight (Infrastructure device management for Cisco UCS systems)
+* ITSM (IT Service Management for change control and incident tracking)
+```
 
 ---
 
 ## Exercises
 
-### Exercise 1 — Query ThousandEyes directly
+### Exercise 1 — Compare Qwen vs. Claude on the same question
+
+Ask the same question twice — first with Qwen active, then swap the LLM connection to Claude and ask again:
 
 ```
-Are there any ThousandEyes alerts or outages right now?
+What clients are connected to the Meraki network? Summarize in 3 bullet points.
 ```
 
-```
-List all endpoint agents in the account.
-```
+Observe differences in:
+- Response time
+- Formatting style
+- Level of detail
+- Whether it stays within your system prompt rules
 
-### Exercise 2 — Query your specific endpoint
-
-```
-Show me the endpoint agent metrics for ADUNSMOO-M-RXMV
-```
+### Exercise 2 — Query the Nexus data center
 
 ```
-What tests are scheduled for that endpoint agent?
-```
-
-### Exercise 3 — Cross-domain correlation
-
-Try a question that requires both tools:
-
-```
-I'm experiencing slow internet. Can you check both Meraki and ThousandEyes to see if there's an issue?
-```
-
-Watch the execution panel — you should see the agent:
-1. Call a ThousandEyes tool (e.g., `search_outages` or `list_events`)
-2. Call a Meraki tool (e.g., `getNetworkClients` or device status)
-3. Synthesize both results into a single, correlated answer
-
-### Exercise 4 — Ask about recent events
-
-```
-What events have ThousandEyes detected in the last 24 hours?
+What VLANs are configured on the Nexus switches?
 ```
 
 ```
-Are any of those correlated with changes in the Meraki network?
+Show me the network topology — which devices are connected to which?
 ```
 
-### Exercise 5 — Push the boundaries
-
 ```
-Which endpoint agent has the worst packet loss, and does Meraki show anything unusual for that device?
+What is the status of the interfaces on the core switch?
 ```
 
-This requires the agent to:
-1. List endpoint agents and their metrics (ThousandEyes)
-2. Identify the worst performer
-3. Look up that device in Meraki
-4. Summarize both perspectives
+### Exercise 3 — Query Intersight compute
+
+```
+What servers are managed in Intersight?
+```
+
+```
+Are any UCS servers running outdated firmware?
+```
+
+```
+Are there any hardware health alerts for my servers?
+```
+
+### Exercise 4 — Query the ITSM system
+
+```
+Are there any open incidents right now?
+```
+
+```
+Is there a change request scheduled for this week?
+```
+
+```
+Search the knowledge base for documentation on VLAN configuration.
+```
+
+### Exercise 5 — Cross-domain correlation (the full power)
+
+This is where having 5 connected domains pays off. Try:
+
+```
+A user is reporting slow application performance. Check ThousandEyes for endpoint issues,
+Meraki for network problems, Nexus for any data center connectivity issues,
+and ITSM for any related incidents or scheduled changes.
+```
+
+Watch the agent orchestrate calls across multiple MCP servers and synthesize a correlated answer — something that would take a human engineer 20–30 minutes to do manually.
+
+```
+There's a ThousandEyes alert on the path to our data center.
+Check Nexus for any link failures and look up any related ITSM incidents.
+```
+
+### Exercise 6 — A/B test cloud vs. on-prem LLM
+
+1. Ask a complex cross-domain question with Qwen active. Note the response time and quality.
+2. Disconnect Qwen from the agent's LLM input.
+3. Connect Claude Haiku to the agent's LLM input.
+4. Ask the same question.
+5. Discuss: for this type of structured, tool-based network ops query, how much quality difference is there? Is the privacy benefit of Qwen worth the capability tradeoff?
+
+---
+
+## Why More Tools is a Double-Edged Sword
+
+You now have 5 MCP servers connected. This provides enormous capability, but also increases:
+
+- **Token usage:** every tool's description is sent to the LLM on every turn
+- **Latency:** more tools to evaluate before responding
+- **Error surface:** more tools = more chances to call the wrong one
+
+This is especially pronounced with smaller on-prem models. Mitigation strategies:
+- Write a very tight, directive system prompt
+- Use `include` filtering in each MCP client to expose only the tools you actually need
+- Consider breaking into multiple specialized agents (a Meraki agent, a data center agent, etc.) with a routing layer
+
+---
+
+## MCP Server Availability in Lab vs. Production
+
+The Nexus, Intersight, and ITSM endpoints use Kubernetes internal DNS (`svc.cluster.local`). They are only reachable from within the lab cluster. If you are running N8N outside the cluster or in your own environment:
+
+- Replace with your organization's actual MCP server URLs
+- These MCP servers can be self-hosted or SaaS-based — the N8N MCP Client node works the same either way
+- See each platform's documentation for how to deploy or connect to their MCP server
 
 ---
 
 ## Key Takeaways
 
-- Two MCP servers give the agent cross-domain visibility with no additional wiring — just connect and ask.
-- Curating which tools to expose (not enabling all ~900+ Meraki or all ThousandEyes tools) keeps performance high.
-- Mandatory parameters (like `aid` for ThousandEyes) belong in the system prompt, not left to chance.
-- This is now a production-quality network operations assistant built entirely in N8N with no custom code.
+- On-prem LLMs provide data privacy at the cost of context window size and response speed.
+- For focused, tool-augmented agents, smaller models (7B–13B parameters) perform well when the system prompt is tight.
+- N8N's OpenAI-compatible node works with any inference server — vLLM, Ollama, llama.cpp, LM Studio.
+- Five MCP servers gives the agent cross-domain visibility that previously required multiple human specialists.
+- Context window is now the main bottleneck — large tool response payloads can overflow a smaller model's window.
 
 ---
 
 ## What You Have Built
 
-You started with a weather chatbot and ended with a network operations assistant that can:
+Over five steps, you have transformed a simple weather chatbot into a full-stack network operations AI agent:
 
-- Query live Meraki network data (clients, devices, configs, alerts)
-- Query ThousandEyes endpoint metrics, events, and outages
-- Correlate information across both platforms
-- Maintain multi-turn conversation context
-- Cite its sources in every answer
-- Gracefully decline questions outside its scope
+```
+Step 1: Weather + News bot (explore agentic concepts)
+Step 2: + Meraki MCP (understand MCP)
+Step 3: + Network engineer persona (understand system prompts)
+Step 4: - Weather tool (understand focused toolsets)
+Step 5: Qwen on-prem LLM + Nexus + Intersight + ITSM + ThousandEyes (privacy + full visibility)
+```
 
-All from a no-code visual workflow in N8N.
+All built visually in N8N. No custom application code. No infrastructure beyond N8N itself and your MCP servers.
 
 ---
 
-## Where to Go Next
+## Next Step
 
-- Add more ThousandEyes tools (test results, path visualization data)
-- Connect to additional MCP servers (e.g., a ticketing system, a CMDB)
-- Add N8N workflow actions (e.g., send a Webex message when the agent finds an issue)
-- Experiment with different LLMs (GPT-4o, Gemini, local models via Ollama)
-- Tune the system prompt for your specific team's terminology and processes
+For an optional deep-dive into ThousandEyes endpoint monitoring, proceed to [Step 6](../step6/README.md) — a focused ThousandEyes-only exercise.

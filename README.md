@@ -20,10 +20,11 @@ A hands-on, progressive workshop that teaches the fundamentals of agentic AI wor
 
 ```
 Step 1 ──► Step 2 ──► Step 3 ──► Step 4 ──► Step 5 ──► Step 6 (optional)
-Explore    Add        Change      Focus       Add         On-prem LLM
-Weather    Meraki     Persona     Toolset     ThousandEyes + Nexus +
-+ News     MCP        to NetEng   (Meraki     MCP          Intersight
-Bot                               only)                    + ITSM
+Explore    Add        Change      Focus       On-prem     ThousandEyes
+Weather    Meraki     Persona     Toolset     Qwen LLM    deep-dive
++ News     MCP        to NetEng   (Meraki     + Nexus +
+Bot                               only)       Intersight
+                                              + ITSM
 ```
 
 | Step | What changes | Learning objective |
@@ -32,8 +33,8 @@ Bot                               only)                    + ITSM
 | [Step 2](step2/README.md) | Replace RSS news tool with Meraki MCP | Understand what MCP is and why it matters |
 | [Step 3](step3/README.md) | Update agent persona to network engineer | Understand how system prompts shape agent behavior |
 | [Step 4](step4/README.md) | Remove weather tool | Understand how focused toolsets improve agent accuracy |
-| [Step 5](step5/README.md) | Add ThousandEyes MCP | Understand multi-source correlation in network ops |
-| [Step 6](step6/README.md) | Swap to Qwen on-prem LLM + add Nexus, Intersight, ITSM MCPs | Understand data privacy tradeoffs and cross-domain ops |
+| [Step 5](step5/README.md) | Swap to Qwen on-prem LLM + add Nexus, Intersight, ITSM MCPs | Understand data privacy tradeoffs and cross-domain ops |
+| [Step 6](step6/README.md) *(optional)* | Focused ThousandEyes + Meraki agent | Deep-dive into endpoint monitoring and cross-domain correlation |
 
 ---
 

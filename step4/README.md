@@ -137,4 +137,4 @@ The agent should list only the Meraki tools — not mention weather or news. Thi
 
 ## Next Step
 
-This is a complete, production-quality Meraki assistant. For an optional advanced exercise, proceed to [Step 5](../step5/README.md) — Add ThousandEyes MCP for end-to-end network + endpoint visibility.
+This is a complete, focused Meraki assistant. Proceed to [Step 5](../step5/README.md) — swap the LLM to an on-premises Qwen model and expand the toolset with Nexus, Intersight, and ITSM MCP servers.
