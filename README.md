@@ -19,11 +19,11 @@ A hands-on, progressive workshop that teaches the fundamentals of agentic AI wor
 ## Workshop Progression
 
 ```
-Step 1 ──► Step 2 ──► Step 3 ──► Step 4 ──► Step 5 (optional)
-Explore    Add        Change      Focus       Add
-Weather    Meraki     Persona     Toolset     ThousandEyes
-+ News     MCP        to NetEng   (Meraki     MCP
-Bot                               only)
+Step 1 ──► Step 2 ──► Step 3 ──► Step 4 ──► Step 5 ──► Step 6 (optional)
+Explore    Add        Change      Focus       Add         On-prem LLM
+Weather    Meraki     Persona     Toolset     ThousandEyes + Nexus +
++ News     MCP        to NetEng   (Meraki     MCP          Intersight
+Bot                               only)                    + ITSM
 ```
 
 | Step | What changes | Learning objective |
@@ -33,6 +33,7 @@ Bot                               only)
 | [Step 3](step3/README.md) | Update agent persona to network engineer | Understand how system prompts shape agent behavior |
 | [Step 4](step4/README.md) | Remove weather tool | Understand how focused toolsets improve agent accuracy |
 | [Step 5](step5/README.md) | Add ThousandEyes MCP | Understand multi-source correlation in network ops |
+| [Step 6](step6/README.md) | Swap to Qwen on-prem LLM + add Nexus, Intersight, ITSM MCPs | Understand data privacy tradeoffs and cross-domain ops |
 
 ---
 
@@ -50,7 +51,7 @@ You will need at least one LLM credential configured in N8N:
 | Anthropic (Claude) | [console.anthropic.com](https://console.anthropic.com/) |
 | OpenAI (GPT) | [platform.openai.com](https://platform.openai.com/) |
 
-For Steps 2–4 you will also need access to the **Meraki MCP server**. For Step 5 you will need a **ThousandEyes bearer token**.
+For Steps 2–4 you will also need access to the **Meraki MCP server**. For Step 5 you will need a **ThousandEyes bearer token**. For Step 6 you will need access to the **on-premises inference server** (vLLM/Ollama running Qwen3.5-9B) and the lab's internal Nexus, Intersight, and ITSM MCP servers.
 
 ---
 
@@ -108,7 +109,7 @@ Research and practice consistently show that giving an LLM too many tools increa
 Agentic101/
 ├── README.md            ← This file
 ├── StartHere.json       ← Original N8N Weather + News workflow (reference)
-├── EndGoal.json         ← Final Meraki + ThousandEyes workflow (reference)
+├── EndGoal.json         ← Final all-MCP workflow with Qwen (reference)
 ├── step1/
 │   ├── README.md
 │   └── workflow.json
@@ -121,7 +122,12 @@ Agentic101/
 ├── step4/
 │   ├── README.md
 │   └── workflow.json
-└── step5/
-    ├── README.md
-    └── workflow.json
+├── step5/
+│   ├── README.md
+│   └── workflow.json
+├── step6/
+│   ├── README.md
+│   └── workflow.json
+└── ExtraCredit/
+    └── MCP_SCANNER.md   ← Scan MCP servers for security threats
 ```

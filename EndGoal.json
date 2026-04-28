@@ -1,5 +1,5 @@
 {
-  "name": "ThousandEyes + Meraki MCP — skill-scanner (Python CLI)",
+  "name": "All MCPs Agent",
   "nodes": [
     {
       "parameters": {
@@ -18,7 +18,7 @@
     {
       "parameters": {
         "options": {
-          "systemMessage": "=Network Agent\n\n# Role\n\nYou are a concise, factual network engineering assistant with access to these tools:\n\n* ThousandEyes (User Endpoint Analytics)\n* Meraki (Network Management Platform)\n\n# Behavior\n\n\n* On the first message only, greet the user and say you can assist with network operations.\n* Never invent information. Only use content found in the tools.\n* Be efficient. Gather only the data needed to answer the question. Do not make exploratory tool calls. \n* Before making a tool call, check if the answer was already retrieved earlier in this conversation.\n* When calling any ThousandEyes MCP tool, you MUST always include \"aid\": \"369116\" in every tool call. Never omit this parameter, even if not explicitly requested.\n* When calling Meraki MCP Tool, default to organization ID 3705899543372497758 and network ID L_3705899543372507602, unless otherwise specified. \n\n\n# Answer Format\n\n* Include a section **“Sources checked:”** listing the API calls used\n\n# Edge Cases\n\n* If you find too little information, say so and suggest adding more data sources to the agent.\n* If the user asks for opinions or predictions, stay neutral and summarize facts only.\n\n# Date\n\nToday is {{ $today }}\n",
+          "systemMessage": "=Network Agent\n\n# Role\n\nYou are a concise, factual network engineering assistant with access to these MCP Servers:\n\n* ThousandEyes (User Endpoint Analytics)\n* Meraki (Campus Network Management Platform)\n* Nexus (Data Center switching management)\n* Intersight (Infrastructure device management for Cisco UCS systems)\n* ITSM (IT Service Management for change control and incident tracking.)\n\n# Behavior\n\n\n* On the first message only, greet the user and say you can assist with network operations.\n* Never invent information. Only use content found in the tools.\n* Be efficient. Gather only the data needed to answer the question. Do not make exploratory tool calls. \n* Before making a tool call, check if the answer was already retrieved earlier in this conversation.\n* When calling any ThousandEyes MCP tool, you MUST always include \"aid\": \"369116\" in every tool call. Never omit this parameter, even if not explicitly requested.\n* When calling Meraki MCP Tool, default to organization ID 3705899543372497758 and network ID L_3705899543372507602, unless otherwise specified. \n\n\n# Answer Format\n\n* Include a section **“Sources checked:”** listing the API calls used\n\n# Edge Cases\n\n* If you find too little information, say so and suggest adding more data sources to the agent.\n* If the user asks for opinions or predictions, stay neutral and summarize facts only.\n\n# Date\n\nToday is {{ $today }}\n",
           "maxIterations": 7
         }
       },
@@ -201,8 +201,8 @@
       "parameters": {
         "model": {
           "__rl": true,
-          "mode": "id",
-          "value": "Qwen/Qwen3-Coder-Next"
+          "value": "Qwen/Qwen3.5-9B",
+          "mode": "id"
         },
         "builtInTools": {},
         "options": {}
@@ -224,168 +224,95 @@
     },
     {
       "parameters": {
-        "fieldToSplitOut": "mcp_servers",
-        "include": "allOtherFields",
-        "options": {}
+        "content": "## Nexus System \n\n\n\n\n\n\n\n\n\n\n\n\nThis MCP Server provides access to Nexus Dashboard Cisco Networking Management Platform\n\nAdvertised Tools and information Provided \n\n* **Switch Configuration**\n  _Retrives current switch configuration  including interfaces, VLANS, and routing_\n\n* **VLAN Management**\n  _Manage VLAN configuration, assignments and trunk settings_ \n\n* **Network Topology**\n _View network topology ,device Connections and Link Status_ \n\n\n\n\n\n\n\n",
+        "height": 544,
+        "width": 400,
+        "color": 7
       },
-      "id": "16a28446-d050-4605-8837-5cde623f2d74",
-      "name": "One item per MCP root",
-      "type": "n8n-nodes-base.splitOut",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        592,
+        368
+      ],
       "typeVersion": 1,
-      "position": [
-        -736,
-        1168
-      ]
+      "id": "a4e08182-e67d-429c-b74d-5a903311abcb",
+      "name": "Sticky Note2"
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "={{ ($env.SKILL_SCANNER_API_URL || 'http://127.0.0.1:8000').replace(/\\/$/, '') + '/scan' }}",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ skill_directory: $json.skill_root, policy: ($json.skill_scanner || {}).policy || 'balanced', use_behavioral: Boolean(($json.skill_scanner || {}).use_behavioral), use_llm: Boolean(($json.skill_scanner || {}).use_llm), llm_provider: ($json.skill_scanner || {}).llm_provider || 'anthropic', use_virustotal: Boolean(($json.skill_scanner || {}).use_virustotal), use_trigger: Boolean(($json.skill_scanner || {}).use_trigger), enable_meta: Boolean(($json.skill_scanner || {}).enable_meta), use_aidefense: Boolean(($json.skill_scanner || {}).use_aidefense) }) }}",
-        "options": {}
+        "content": "## Intersight System\n\n\n\n\n\n\n\n\n\n\n\n\nThis MCP Server provides access to intersight Compute Managment Platform\n\nAdvertised Tools and Information Provided\n\n* **Device Inventory** \n _Retrieved current device inventory including servers, switches, and storage devices_\n\n* **Firmware Status**\n _Check Firmware version and update status across all managed devices_\n\n* **Hardware Monitoring**\n _Get Hardware Health status, temperatures, and performance metrics_",
+        "height": 560,
+        "width": 400,
+        "color": 7
       },
-      "id": "6e087c83-a890-41c2-8d4c-eb54b86ccaaf",
-      "name": "POST /scan (skill-scanner-api)",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -512,
-        1168
-      ]
-    },
-    {
-      "parameters": {
-        "aggregate": "aggregateAllItemData",
-        "destinationFieldName": "mcp_skill_scans",
-        "options": {}
-      },
-      "id": "8965bf4f-172f-45ac-aa24-05c46546bc77",
-      "name": "Combine all scan responses",
-      "type": "n8n-nodes-base.aggregate",
+        1056,
+        368
+      ],
       "typeVersion": 1,
-      "position": [
-        -304,
-        1168
-      ]
+      "id": "4afebb96-9ac9-4578-8ea4-47c83adb651b",
+      "name": "Sticky Note3"
     },
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "mcp-servers-field",
-              "name": "mcp_servers",
-              "type": "array",
-              "value": "={{ [{ id: 'example-skill', skill_root: '/tmp/test-skill' }] }}"
-            },
-            {
-              "id": "skill-scanner-field",
-              "name": "skill_scanner",
-              "type": "object",
-              "value": "={{ { policy: 'balanced', use_behavioral: false, use_llm: false, enable_meta: false } }}"
-            }
-          ]
-        },
-        "options": {}
+        "content": "## ITSM\n\n\n\n\n\n\n\n\n\n\n\n\nThis MCP Server provides access to IT operations insights\n\nAdvertised Tools and Information Provided\n\n* Change Management\n Manage change requests, approvals, and implementation schedules\n\n* Incident Management\nTrack incident reports, status updates, and resolution progress \n\n* IT Knowledge Base \nAccess Knowledge base articles, procedures, and documentation\n\n\n",
+        "height": 560,
+        "width": 400,
+        "color": 7
       },
-      "id": "13e77761-bb1a-4587-9f69-c104c0ead21e",
-      "name": "Scan input (edit paths)1",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
+      "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -960,
-        1168
-      ]
-    },
-    {
-      "parameters": {},
-      "id": "802ad218-0ec6-4ba7-a08d-fab7992f78c6",
-      "name": "When clicking 'Test workflow'",
-      "type": "n8n-nodes-base.manualTrigger",
+        1552,
+        368
+      ],
       "typeVersion": 1,
-      "position": [
-        -1152,
-        1440
-      ]
+      "id": "fc0f2ab9-5bc5-4640-89cc-914083d3acd4",
+      "name": "Sticky Note4"
     },
     {
       "parameters": {
-        "fieldToSplitOut": "mcp_servers",
-        "include": "allOtherFields",
+        "endpointUrl": "http://mcp-nexus.n8n-lab.svc.cluster.local:8011/mcp",
         "options": {}
       },
-      "id": "2a58d21a-00c3-482e-865a-f5757c40a0cf",
-      "name": "One item per MCP root1",
-      "type": "n8n-nodes-base.splitOut",
-      "typeVersion": 1,
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
       "position": [
-        -704,
-        1424
-      ]
+        832,
+        400
+      ],
+      "id": "5360e8f0-182b-45b1-883c-88d4a09b7c31",
+      "name": "Nexus MCP Client"
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "={{ ('http://127.0.0.1:8000').replace(/\\/$/, '') + '/scan' }}",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ skill_directory: $json.skill_root, policy: ($json.skill_scanner || {}).policy || 'balanced', use_behavioral: Boolean(($json.skill_scanner || {}).use_behavioral), use_llm: Boolean(($json.skill_scanner || {}).use_llm), llm_provider: ($json.skill_scanner || {}).llm_provider || 'anthropic', use_virustotal: Boolean(($json.skill_scanner || {}).use_virustotal), use_trigger: Boolean(($json.skill_scanner || {}).use_trigger), enable_meta: Boolean(($json.skill_scanner || {}).enable_meta), use_aidefense: Boolean(($json.skill_scanner || {}).use_aidefense) }) }}",
+        "endpointUrl": "http://mcp-intersight.n8n-lab.svc.cluster.local:8010/mcp",
         "options": {}
       },
-      "id": "84b45462-7380-4ce0-9de9-0c94b12fd366",
-      "name": "POST /scan (skill-scanner-api)1",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
       "position": [
-        -480,
-        1424
-      ]
+        1328,
+        400
+      ],
+      "id": "0fd7c726-c162-47fc-8c15-cb8f85fffa05",
+      "name": "Intersight  MCP Client"
     },
     {
       "parameters": {
-        "aggregate": "aggregateAllItemData",
-        "destinationFieldName": "mcp_skill_scans",
-        "options": {}
+        "endpointUrl": "http://mcp-itsm.n8n-lab.svc.cluster.local:8012/mcp",
+        "options": {
+          "timeout": 60000
+        }
       },
-      "id": "a156e3ce-4f42-4005-a84b-15dcef1b226c",
-      "name": "Combine all scan responses1",
-      "type": "n8n-nodes-base.aggregate",
-      "typeVersion": 1,
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
       "position": [
-        -272,
-        1424
-      ]
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "mcp-servers-field",
-              "name": "mcp_servers",
-              "type": "array",
-              "value": "={{ [{ id: 'meraki', mcp_url: 'https://selent-mcp-selent-mcp.apps.rcdnailab01.ciscoailabs.com/mcp', headers: {}, include_tools: [] }] }}"
-            },
-            {
-              "id": "skill-scanner-field",
-              "name": "skill_scanner",
-              "type": "object",
-              "value": "={{ { lenient: true, extra_args: [], base_args: ['--format', 'json', '--compact'] } }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "aedfa840-6375-450a-a54b-3cca865ba862",
-      "name": "Scan input (TE + Meraki MCP)",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        -960,
-        1440
-      ]
+        1824,
+        384
+      ],
+      "id": "9c9a6c02-6643-467f-b389-4d645684b106",
+      "name": "ITSM MCP Client"
     }
   ],
   "pinData": {},
@@ -414,13 +341,7 @@
     },
     "Anthropic Chat Model": {
       "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "ThousandEyes MCP Client": {
@@ -447,81 +368,43 @@
     },
     "Qwen3 Coder LLM": {
       "ai_languageModel": [
-        []
-      ]
-    },
-    "One item per MCP root": {
-      "main": [
         [
           {
-            "node": "POST /scan (skill-scanner-api)",
-            "type": "main",
+            "node": "AI Agent",
+            "type": "ai_languageModel",
             "index": 0
           }
         ]
       ]
     },
-    "POST /scan (skill-scanner-api)": {
-      "main": [
+    "Nexus MCP Client": {
+      "ai_tool": [
         [
           {
-            "node": "Combine all scan responses",
-            "type": "main",
+            "node": "AI Agent",
+            "type": "ai_tool",
             "index": 0
           }
         ]
       ]
     },
-    "Scan input (edit paths)1": {
-      "main": [
+    "Intersight  MCP Client": {
+      "ai_tool": [
         [
           {
-            "node": "One item per MCP root",
-            "type": "main",
+            "node": "AI Agent",
+            "type": "ai_tool",
             "index": 0
           }
         ]
       ]
     },
-    "When clicking 'Test workflow'": {
-      "main": [
+    "ITSM MCP Client": {
+      "ai_tool": [
         [
           {
-            "node": "Scan input (TE + Meraki MCP)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "One item per MCP root1": {
-      "main": [
-        [
-          {
-            "node": "POST /scan (skill-scanner-api)1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "POST /scan (skill-scanner-api)1": {
-      "main": [
-        [
-          {
-            "node": "Combine all scan responses1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Scan input (TE + Meraki MCP)": {
-      "main": [
-        [
-          {
-            "node": "One item per MCP root1",
-            "type": "main",
+            "node": "AI Agent",
+            "type": "ai_tool",
             "index": 0
           }
         ]
@@ -534,7 +417,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "e5021b46-b89a-41d5-9056-5925a67ee5f8",
+  "versionId": "7ca8823e-584b-4146-990d-f7e0936ab35f",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "5e82a517e2de0cb9a6c3da60373a908fe18afe624199280e9da4dd76ff6ba955"

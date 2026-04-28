@@ -1,0 +1,246 @@
+# Step 6 — On-Prem LLM (Qwen) + Additional MCP Servers
+
+**Goal:** Replace the cloud LLM with an on-premises model for data privacy, and expand the agent's capabilities with three additional MCP servers covering data center switching, compute infrastructure, and IT service management.
+
+---
+
+## Background: Why Run an LLM On-Premises?
+
+In every step so far, your conversations have been processed by a cloud API (Anthropic Claude). Every message you send — and every tool response the agent receives — is transmitted to Anthropic's servers for inference.
+
+For many enterprise network operations scenarios, this is a concern:
+
+- **Sensitive data in tool responses:** client MAC addresses, IP allocations, device hostnames, firmware versions, incident tickets, and change records all pass through the LLM
+- **Compliance and data sovereignty:** some regulated environments prohibit sending operational data to third-party cloud APIs
+- **Cost at scale:** cloud API pricing scales with token volume; large toolsets generate large tool responses
+
+**On-premises LLMs** solve this by running the model inside your own infrastructure. No data leaves your perimeter.
+
+---
+
+## The Tradeoff: Capability vs. Privacy
+
+| | Cloud LLM (Claude Haiku) | On-Prem LLM (Qwen3.5-9B) |
+|---|---|---|
+| **Data privacy** | Data sent to Anthropic | All data stays on-prem |
+| **Context window** | 200K tokens | ~8K–32K tokens (model-dependent) |
+| **Response speed** | Fast (Anthropic's infrastructure) | Depends on your GPU |
+| **Reasoning quality** | Higher (larger model) | Good for focused tasks |
+| **Cost** | Per-token API pricing | Fixed infrastructure cost |
+| **Model updates** | Automatic | Manual |
+
+For focused, domain-specific agents like this network assistant, a smaller 9B-parameter model performs well — especially when the system prompt and toolset are tightly scoped.
+
+---
+
+## What Changes in This Step
+
+| Before (Step 5) | After (Step 6) |
+|---|---|
+| LLM: Claude Haiku (cloud) | LLM: Qwen3.5-9B (on-prem) |
+| Tools: ThousandEyes + Meraki | Tools: ThousandEyes + Meraki + Nexus + Intersight + ITSM |
+| Persona: 2 tools listed | Persona: 5 tools listed |
+
+---
+
+## Part 1 — Swap to Qwen On-Premise LLM
+
+### Setup — Import the Pre-Built Workflow
+
+1. In N8N, create a new workflow.
+2. Import `workflow.json` from this folder.
+3. Configure the **`Qwen3 LLM (on-prem)`** node:
+   - This uses an **OpenAI-compatible API** credential (N8N node type: `lmChatOpenAi`)
+   - Set the **Base URL** to your on-prem inference server endpoint (e.g., `http://your-gpu-server:8000/v1`)
+   - Set the **Model** to `Qwen/Qwen3.5-9B` (or the model name your server uses)
+   - The `Anthropic Chat Model` node is kept but disconnected — use it to A/B test responses
+4. Save and Activate.
+
+### Setup — Manual Edit from Step 5
+
+1. In your Step 5 workflow, click **"+"** to add a new node.
+2. Search for **OpenAI Chat Model** (N8N uses this type for any OpenAI-compatible API).
+3. In the node settings:
+   - **Base URL:** your on-prem inference endpoint
+   - **Model:** `Qwen/Qwen3.5-9B`
+4. Draw a wire from `Qwen3 LLM` → Agent's **AI Language Model** input.
+5. Disconnect the existing Claude wire (click it, press Delete).
+6. Keep the Claude node on the canvas but unconnected — you will A/B test with it later.
+
+### What is an OpenAI-Compatible API?
+
+Most on-premises LLM runtimes (vLLM, Ollama, LM Studio, llama.cpp server) expose an API that mimics the OpenAI `/v1/chat/completions` endpoint. N8N's OpenAI Chat Model node works with any of these without code changes — just point it at a different base URL.
+
+---
+
+## Part 2 — Add Three New MCP Servers
+
+### The New MCP Servers
+
+| MCP Server | Endpoint | What it provides |
+|---|---|---|
+| **Nexus** | `http://mcp-nexus.n8n-lab.svc.cluster.local:8011/mcp` | Cisco Nexus switch config, VLANs, topology |
+| **Intersight** | `http://mcp-intersight.n8n-lab.svc.cluster.local:8010/mcp` | UCS server inventory, firmware, hardware health |
+| **ITSM** | `http://mcp-itsm.n8n-lab.svc.cluster.local:8012/mcp` | Change requests, incidents, knowledge base |
+
+These endpoints are internal to the lab cluster (`svc.cluster.local`). In your own environment, replace with your actual MCP server URLs.
+
+### Adding Each MCP Client (repeat for all three)
+
+1. Click **"+"** in the canvas.
+2. Search for **MCP Client Tool** and select it.
+3. Set the **MCP Endpoint URL** to the endpoint from the table above.
+4. No authentication is required for the lab servers. Add **Header Auth** or **Bearer Token** if your environment requires it.
+5. Connect the node → Agent's **Tools** input.
+6. Repeat for all three new servers.
+
+### Update the System Prompt
+
+Open the AI Agent node and update the Role section to list all 5 tools:
+
+```
+You are a concise, factual network engineering assistant with access to these MCP Servers:
+
+* ThousandEyes (User Endpoint Analytics)
+* Meraki (Campus Network Management Platform)
+* Nexus (Data Center switching management)
+* Intersight (Infrastructure device management for Cisco UCS systems)
+* ITSM (IT Service Management for change control and incident tracking)
+```
+
+---
+
+## Exercises
+
+### Exercise 1 — Compare Qwen vs. Claude on the same question
+
+Ask the same question twice — first with Qwen active, then swap the LLM connection to Claude and ask again:
+
+```
+What clients are connected to the Meraki network? Summarize in 3 bullet points.
+```
+
+Observe differences in:
+- Response time
+- Formatting style
+- Level of detail
+- Whether it stays within your system prompt rules
+
+### Exercise 2 — Query the Nexus data center
+
+```
+What VLANs are configured on the Nexus switches?
+```
+
+```
+Show me the network topology — which devices are connected to which?
+```
+
+```
+What is the status of the interfaces on the core switch?
+```
+
+### Exercise 3 — Query Intersight compute
+
+```
+What servers are managed in Intersight?
+```
+
+```
+Are any UCS servers running outdated firmware?
+```
+
+```
+Are there any hardware health alerts for my servers?
+```
+
+### Exercise 4 — Query the ITSM system
+
+```
+Are there any open incidents right now?
+```
+
+```
+Is there a change request scheduled for this week?
+```
+
+```
+Search the knowledge base for documentation on VLAN configuration.
+```
+
+### Exercise 5 — Cross-domain correlation (the full power)
+
+This is where having 5 connected domains pays off. Try:
+
+```
+A user is reporting slow application performance. Check ThousandEyes for endpoint issues,
+Meraki for network problems, Nexus for any data center connectivity issues,
+and ITSM for any related incidents or scheduled changes.
+```
+
+Watch the agent orchestrate calls across multiple MCP servers and synthesize a correlated answer — something that would take a human engineer 20–30 minutes to do manually.
+
+```
+There's a ThousandEyes alert on the path to our data center.
+Check Nexus for any link failures and look up any related ITSM incidents.
+```
+
+### Exercise 6 — A/B test cloud vs. on-prem LLM
+
+1. Ask a complex cross-domain question with Qwen active. Note the response time and quality.
+2. Disconnect Qwen from the agent's LLM input.
+3. Connect Claude Haiku to the agent's LLM input.
+4. Ask the same question.
+5. Discuss: for this type of structured, tool-based network ops query, how much quality difference is there? Is the privacy benefit of Qwen worth the capability tradeoff?
+
+---
+
+## Why More Tools is a Double-Edged Sword
+
+You now have 5 MCP servers connected. This provides enormous capability, but also increases:
+
+- **Token usage:** every tool's description is sent to the LLM on every turn
+- **Latency:** more tools to evaluate before responding
+- **Error surface:** more tools = more chances to call the wrong one
+
+This is especially pronounced with smaller on-prem models. Mitigation strategies:
+- Write a very tight, directive system prompt
+- Use `include` filtering in each MCP client to expose only the tools you actually need
+- Consider breaking into multiple specialized agents (a Meraki agent, a data center agent, etc.) with a routing layer
+
+---
+
+## MCP Server Availability in Lab vs. Production
+
+The Nexus, Intersight, and ITSM endpoints use Kubernetes internal DNS (`svc.cluster.local`). They are only reachable from within the lab cluster. If you are running N8N outside the cluster or in your own environment:
+
+- Replace with your organization's actual MCP server URLs
+- These MCP servers can be self-hosted or SaaS-based — the N8N MCP Client node works the same either way
+- See each platform's documentation for how to deploy or connect to their MCP server
+
+---
+
+## Key Takeaways
+
+- On-prem LLMs provide data privacy at the cost of context window size and response speed.
+- For focused, tool-augmented agents, smaller models (7B–13B parameters) perform well when the system prompt is tight.
+- N8N's OpenAI-compatible node works with any inference server — vLLM, Ollama, llama.cpp, LM Studio.
+- Five MCP servers gives the agent cross-domain visibility that previously required multiple human specialists.
+- Context window is now the main bottleneck — large tool response payloads can overflow a smaller model's window.
+
+---
+
+## What You Have Built
+
+Over six steps, you have transformed a simple weather chatbot into a full-stack network operations AI agent:
+
+```
+Step 1: Weather + News bot (explore agentic concepts)
+Step 2: + Meraki MCP (understand MCP)
+Step 3: + Network engineer persona (understand system prompts)
+Step 4: - Weather tool (understand focused toolsets)
+Step 5: + ThousandEyes MCP (understand cross-domain correlation)
+Step 6: Qwen on-prem LLM + Nexus + Intersight + ITSM (understand privacy/capability tradeoffs)
+```
+
+All built visually in N8N. No custom application code. No infrastructure beyond N8N itself and your MCP servers.
