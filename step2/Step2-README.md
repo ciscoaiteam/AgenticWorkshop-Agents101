@@ -128,4 +128,4 @@ Since `Get News` was removed, the agent has no news tool. Observe how it respond
 
 ## Next Step
 
-Proceed to [Step 3](../step3/README.md) — Change the agent persona to a network engineering assistant.
+Proceed to [Step 3](../step3/Step3-README.md) — Change the agent persona to a network engineering assistant.

@@ -27,11 +27,13 @@ In Step 3, the agent had two tools: `Get Weather` and `Meraki MCP Client`. For a
 
 ## What Changes in This Step
 
-| Before (Step 3) | After (Step 4) |
-|---|---|
-| Tools: `Get Weather` + `Meraki MCP Client` | Tools: `Meraki MCP Client` only |
+
+| Before (Step 3)                                 | After (Step 4)                          |
+| ----------------------------------------------- | --------------------------------------- |
+| Tools: `Get Weather` + `Meraki MCP Client`      | Tools: `Meraki MCP Client` only         |
 | Persona: Network engineer (with weather access) | Persona: Network engineer (Meraki only) |
-| System prompt mentions weather tool | System prompt updated — weather removed |
+| System prompt mentions weather tool             | System prompt updated — weather removed |
+
 
 ---
 
@@ -54,75 +56,19 @@ In Step 3, the agent had two tools: `Get Weather` and `Meraki MCP Client`. For a
 
 ---
 
-## Exercises
-
-### Exercise 1 — Confirm the agent is working without weather
-
-```
-What clients are connected to my network?
-```
-
-The agent should respond normally using Meraki data.
-
-### Exercise 2 — Test graceful degradation for weather
-
-```
-What should I wear to visit San Jose today?
-```
-
-With the weather tool removed, the agent should respond clearly that it does not have weather data — not hallucinate an answer. It should suggest adding a weather tool if needed.
-
-Compare this to Step 1 where the same question triggered a real API call.
-
-### Exercise 3 — Test network-specific multi-turn conversation
-
-Try a sequence without refreshing the chat:
-
-```
-List all clients connected to the network.
-```
-
-```
-Which of those clients are wireless vs. wired?
-```
-
-```
-How long has the wireless client with the highest usage been connected?
-```
-
-With only Meraki tools, the agent stays completely on-topic across all three turns.
-
-### Exercise 4 — Ask about configuration changes
-
-```
-Have there been any configuration changes on the Meraki network recently?
-```
-
-```
-Who made those changes?
-```
-
-### Exercise 5 — Test the agent's self-awareness
-
-```
-What tools do you have access to?
-```
-
-The agent should list only the Meraki tools — not mention weather or news. This confirms the persona and toolset are aligned.
-
----
-
 ## Comparing Step 1 → Step 4
 
-| | Step 1 | Step 4 |
-|---|---|---|
-| Tools | Weather + News | Meraki MCP only |
-| Persona | Friendly demo bot | Network engineering assistant |
-| Weather question | Real answer | Graceful decline |
-| News question | Real answer | Graceful decline |
-| Network question | No tools for this | Full Meraki access |
-| Response format | Conversational | Structured, cites sources |
-| Reliability | Medium | High |
+
+|                  | Step 1            | Step 4                        |
+| ---------------- | ----------------- | ----------------------------- |
+| Tools            | Weather + News    | Meraki MCP only               |
+| Persona          | Friendly demo bot | Network engineering assistant |
+| Weather question | Real answer       | Graceful decline              |
+| News question    | Real answer       | Graceful decline              |
+| Network question | No tools for this | Full Meraki access            |
+| Response format  | Conversational    | Structured, cites sources     |
+| Reliability      | Medium            | High                          |
+
 
 ---
 
@@ -137,4 +83,4 @@ The agent should list only the Meraki tools — not mention weather or news. Thi
 
 ## Next Step
 
-This is a complete, focused Meraki assistant. Proceed to [Step 5](../step5/README.md) — swap the LLM to an on-premises Qwen model and expand the toolset with Nexus, Intersight, and ITSM MCP servers.
+This is a complete, focused Meraki assistant. Proceed to [Step 5](../step5/Step5-README.md) — swap the LLM to an on-premises Qwen model and expand the toolset with Nexus, Intersight, and ITSM MCP servers.

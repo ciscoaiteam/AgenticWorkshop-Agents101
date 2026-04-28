@@ -14,7 +14,7 @@ Think of it like hiring someone: the LLM is the candidate, the tools are their s
 Same LLM + Same Tools, Different Persona:
 
 Persona: "Friendly n8n demo bot"     ──► Enthusiastic, broad, casual answers
-Persona: "Network engineering asst"  ──► Concise, factual, cites sources
+Persona: "Network engineering assistant"  ──► Concise, factual, cites sources
 ```
 
 Changing the persona is free, instant, and requires no retraining. It is one of the highest-leverage changes you can make to an agent.
@@ -23,12 +23,14 @@ Changing the persona is free, instant, and requires no retraining. It is one of 
 
 ## What Changes in This Step
 
-| Before (Step 2) | After (Step 3) |
-|---|---|
+
+| Before (Step 2)                | After (Step 3)                                 |
+| ------------------------------ | ---------------------------------------------- |
 | Persona: friendly n8n demo bot | Persona: concise network engineering assistant |
-| No rules on citation | Always cites API calls used |
-| No default network context | Knows default org ID and network ID |
-| Tools: Weather + Meraki MCP | Tools: Weather + Meraki MCP (unchanged) |
+| No rules on citation           | Always cites API calls used                    |
+| No default network context     | Knows default org ID and network ID            |
+| Tools: Weather + Meraki MCP    | Tools: Weather + Meraki MCP (unchanged)        |
+
 
 Note: The weather tool is still connected, even though the persona is now a network engineer. This creates an intentional tension — the agent *can* answer weather questions, but it feels out of place. That gets resolved in Step 4.
 
@@ -95,33 +97,7 @@ What clients are connected to my network?
 
 Look for the **"Sources checked:"** section at the bottom. The new persona enforces this format so you always know which API calls were made.
 
-### Exercise 3 — Ask the same question three different ways
-
-Try these in succession (without refreshing — the memory carries context):
-
-```
-How many clients are online?
-```
-
-```
-Which of those clients have been connected the longest?
-```
-
-```
-Is any of them using more than 1GB of data?
-```
-
-The agent should use memory to maintain context rather than re-fetching client data on each turn.
-
-### Exercise 4 — Ask a weather question
-
-```
-What is the weather in San Jose today?
-```
-
-The agent will answer (the weather tool is still connected), but the response tone is now more factual and professional. Notice how awkward it feels for a "network engineering assistant" to be answering weather questions — this motivates Step 4.
-
-### Exercise 5 — Test the "never invent" rule
+### Exercise 3 — Test the "never invent" rule
 
 Ask something the agent cannot know from its tools:
 
@@ -144,4 +120,4 @@ The agent should say it does not have that data, not fabricate a number.
 
 ## Next Step
 
-Proceed to [Step 4](../step4/README.md) — Remove irrelevant tools and focus the agent on Meraki only.
+Proceed to [Step 4](../step4/Step4-README.md) — Remove irrelevant tools and focus the agent on Meraki only.

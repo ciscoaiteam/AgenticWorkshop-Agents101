@@ -11,13 +11,13 @@ A traditional automation runs a fixed sequence of steps — A → B → C. An **
 Every agentic workflow has five core components:
 
 
-| Component  | Role                                                | Node in this workflow                 |
-| ---------- | --------------------------------------------------- | ------------------------------------- |
-| **Input**  | Accepts the user's message                          | `Example Chat` (Chat Trigger)         |
-| **Agent**  | Reasons, plans, decides which tools to use          | `Your First AI Agent`                 |
-| **LLM**    | The language model that powers the agent's thinking | `Any LLM Chat Model` (Claude Haiku)   |
-| **Memory** | Stores recent conversation turns for context        | `Conversation Memory` (Window Buffer) |
-| **Tools**  | External capabilities the agent can call            | `Get Weather` + `Get News`            |
+| Component               | Role                                                | Node in this workflow                 |
+| ----------------------- | --------------------------------------------------- | ------------------------------------- |
+| **Input**               | Accepts the user's message                          | `Example Chat` (Chat Trigger)         |
+| **Agent**               | Reasons, plans, decides which tools to use          | `Your First AI Agent`                 |
+| **LLM**                 | The language model that powers the agent's thinking | `Any LLM Chat Model` (Claude Haiku)   |
+| **Memory**              | Stores recent conversation turns for context        | `Conversation Memory` (Window Buffer) |
+| **Tools (not yet MCP)** | External capabilities the agent can call            | `Get Weather` + `Get News`            |
 
 
 ```
@@ -88,7 +88,7 @@ I'm meeting a client in New York today. What's the weather, and what news topics
 
 Observe: the agent can no longer access news and will either say so or attempt to answer from memory alone — demonstrating that tools are the agent's only window into the real world.
 
-4. Reconnect the wire before moving on.
+1. Reconnect the wire before moving on.
 
 ### Exercise 4 — Inspect the agent persona
 
@@ -118,4 +118,4 @@ You will change this persona in Step 3.
 
 ## Next Step
 
-Proceed to [Step 2](../step2/README.md) — Replace the News tool with the Meraki MCP server.
+Proceed to [Step 2](../step2/Step2-README.md) — Replace the News tool with the Meraki MCP server.

@@ -20,14 +20,16 @@ For many enterprise network operations scenarios, this is a concern:
 
 ## The Tradeoff: Capability vs. Privacy
 
-| | Cloud LLM (Claude Haiku) | On-Prem LLM (Qwen3.5-9B) |
-|---|---|---|
-| **Data privacy** | Data sent to Anthropic | All data stays on-prem |
-| **Context window** | 200K tokens | ~8K–32K tokens (model-dependent) |
-| **Response speed** | Fast (Anthropic's infrastructure) | Depends on your GPU |
-| **Reasoning quality** | Higher (larger model) | Good for focused tasks |
-| **Cost** | Per-token API pricing | Fixed infrastructure cost |
-| **Model updates** | Automatic | Manual |
+
+|                       | Cloud LLM (Claude Haiku)          | On-Prem LLM (Qwen3.5-9B)         |
+| --------------------- | --------------------------------- | -------------------------------- |
+| **Data privacy**      | Data sent to Anthropic            | All data stays on-prem           |
+| **Context window**    | 200K tokens                       | ~8K–32K tokens (model-dependent) |
+| **Response speed**    | Fast (Anthropic's infrastructure) | Depends on your GPU              |
+| **Reasoning quality** | Higher (larger model)             | Good for focused tasks           |
+| **Cost**              | Per-token API pricing             | Fixed infrastructure cost        |
+| **Model updates**     | Automatic                         | Manual                           |
+
 
 For focused, domain-specific agents like this network assistant, a smaller 9B-parameter model performs well — especially when the system prompt and toolset are tightly scoped.
 
@@ -35,11 +37,13 @@ For focused, domain-specific agents like this network assistant, a smaller 9B-pa
 
 ## What Changes in This Step
 
-| Before (Step 4) | After (Step 5) |
-|---|---|
-| LLM: Claude Haiku (cloud) | LLM: Qwen3.5-9B (on-prem) |
-| Tools: Meraki only | Tools: Meraki + Nexus + Intersight + ITSM + ThousandEyes |
-| Persona: Meraki only | Persona: 5 tools listed |
+
+| Before (Step 4)           | After (Step 5)                                           |
+| ------------------------- | -------------------------------------------------------- |
+| LLM: Claude Haiku (cloud) | LLM: Qwen3.5-9B (on-prem)                                |
+| Tools: Meraki only        | Tools: Meraki + Nexus + Intersight + ITSM + ThousandEyes |
+| Persona: Meraki only      | Persona: 5 tools listed                                  |
+
 
 ---
 
@@ -72,11 +76,13 @@ Most on-premises LLM runtimes (vLLM, Ollama, LM Studio, llama.cpp server) expose
 
 ### The New MCP Servers
 
-| MCP Server | Endpoint | What it provides |
-|---|---|---|
-| **Nexus** | `http://mcp-nexus.n8n-lab.svc.cluster.local:8011/mcp` | Cisco Nexus switch config, VLANs, topology |
+
+| MCP Server     | Endpoint                                                   | What it provides                                |
+| -------------- | ---------------------------------------------------------- | ----------------------------------------------- |
+| **Nexus**      | `http://mcp-nexus.n8n-lab.svc.cluster.local:8011/mcp`      | Cisco Nexus switch config, VLANs, topology      |
 | **Intersight** | `http://mcp-intersight.n8n-lab.svc.cluster.local:8010/mcp` | UCS server inventory, firmware, hardware health |
-| **ITSM** | `http://mcp-itsm.n8n-lab.svc.cluster.local:8012/mcp` | Change requests, incidents, knowledge base |
+| **ITSM**       | `http://mcp-itsm.n8n-lab.svc.cluster.local:8012/mcp`       | Change requests, incidents, knowledge base      |
+
 
 These endpoints are internal to the lab cluster (`svc.cluster.local`). In your own environment, replace with your actual MCP server URLs.
 
@@ -96,7 +102,6 @@ Open the AI Agent node and update the Role section to list all 5 tools:
 ```
 You are a concise, factual network engineering assistant with access to these MCP Servers:
 
-* ThousandEyes (User Endpoint Analytics)
 * Meraki (Campus Network Management Platform)
 * Nexus (Data Center switching management)
 * Intersight (Infrastructure device management for Cisco UCS systems)
@@ -116,6 +121,7 @@ What clients are connected to the Meraki network? Summarize in 3 bullet points.
 ```
 
 Observe differences in:
+
 - Response time
 - Formatting style
 - Level of detail
@@ -168,17 +174,10 @@ Search the knowledge base for documentation on VLAN configuration.
 This is where having 5 connected domains pays off. Try:
 
 ```
-A user is reporting slow application performance. Check ThousandEyes for endpoint issues,
-Meraki for network problems, Nexus for any data center connectivity issues,
-and ITSM for any related incidents or scheduled changes.
+A user is reporting slow application performance. Check Meraki for network problems, Nexus for any data center connectivity issues, and ITSM for any related incidents or scheduled changes.
 ```
 
 Watch the agent orchestrate calls across multiple MCP servers and synthesize a correlated answer — something that would take a human engineer 20–30 minutes to do manually.
-
-```
-There's a ThousandEyes alert on the path to our data center.
-Check Nexus for any link failures and look up any related ITSM incidents.
-```
 
 ### Exercise 6 — A/B test cloud vs. on-prem LLM
 
@@ -199,6 +198,7 @@ You now have 5 MCP servers connected. This provides enormous capability, but als
 - **Error surface:** more tools = more chances to call the wrong one
 
 This is especially pronounced with smaller on-prem models. Mitigation strategies:
+
 - Write a very tight, directive system prompt
 - Use `include` filtering in each MCP client to expose only the tools you actually need
 - Consider breaking into multiple specialized agents (a Meraki agent, a data center agent, etc.) with a routing layer
@@ -234,13 +234,11 @@ Step 1: Weather + News bot (explore agentic concepts)
 Step 2: + Meraki MCP (understand MCP)
 Step 3: + Network engineer persona (understand system prompts)
 Step 4: - Weather tool (understand focused toolsets)
-Step 5: Qwen on-prem LLM + Nexus + Intersight + ITSM + ThousandEyes (privacy + full visibility)
+Step 5: Qwen on-prem LLM + Nexus + Intersight + ITSM (privacy + full visibility)
 ```
-
-All built visually in N8N. No custom application code. No infrastructure beyond N8N itself and your MCP servers.
 
 ---
 
 ## Next Step
 
-For an optional deep-dive into ThousandEyes endpoint monitoring, proceed to [Step 6](../step6/README.md) — a focused ThousandEyes-only exercise.
+For an optional deep-dive into ThousandEyes endpoint monitoring, proceed to [Step 6](../step6/Step6-README.md) — a focused ThousandEyes-only exercise.
