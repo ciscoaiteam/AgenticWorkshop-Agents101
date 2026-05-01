@@ -83,8 +83,8 @@ The ThousandEyes API bearer token is **pre-configured** in the workshop environm
 ### Option B — Import the Pre-Built Workflow
 
 1. In the workshop N8N instance, create a new workflow.
-2. Import `workflow.json` from this folder.
-3. If prompted about missing credentials, select the pre-configured shared credentials from the dropdown — the **Anthropic** credential for the LLM node and the **Header Auth** credential for the ThousandEyes MCP Client.
+2. Import `step5-workflow.json` from this folder.
+3. If prompted about missing credentials, select the pre-configured shared credentials from the dropdown — the **OpenAI** credential for the LLM node and the **Header Auth** credential for the ThousandEyes MCP Client.
 4. The `Meraki MCP Client` requires no authentication.
 5. Save and Activate.
 

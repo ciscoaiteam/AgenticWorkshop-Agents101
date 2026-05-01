@@ -6,7 +6,7 @@
 
 ## Background: Why Run an LLM On-Premises?
 
-In every step so far, your conversations have been processed by a cloud API (Anthropic Claude). Every message you send — and every tool response the agent receives — is transmitted to Anthropic's servers for inference.
+In every step so far, your conversations have been processed by a cloud API (OpenAI). Every message you send — and every tool response the agent receives — is transmitted to OpenAI's servers for inference.
 
 For many enterprise network operations scenarios, this is a concern:
 
@@ -21,11 +21,11 @@ For many enterprise network operations scenarios, this is a concern:
 ## The Tradeoff: Capability vs. Privacy
 
 
-|                       | Cloud LLM (Claude Haiku)          | On-Prem LLM (Qwen3.5-9B)         |
+|                       | Cloud LLM (gpt-5-mini)           | On-Prem LLM (Qwen3.5-9B)         |
 | --------------------- | --------------------------------- | -------------------------------- |
-| **Data privacy**      | Data sent to Anthropic            | All data stays on-prem           |
-| **Context window**    | 200K tokens                       | ~8K–32K tokens (model-dependent) |
-| **Response speed**    | Fast (Anthropic's infrastructure) | Depends on your GPU              |
+| **Data privacy**      | Data sent to OpenAI               | All data stays on-prem           |
+| **Context window**    | 128K tokens                       | ~8K–32K tokens (model-dependent) |
+| **Response speed**    | Fast (OpenAI's infrastructure)    | Depends on your GPU              |
 | **Reasoning quality** | Higher (larger model)             | Good for focused tasks           |
 | **Cost**              | Per-token API pricing             | Fixed infrastructure cost        |
 | **Model updates**     | Automatic                         | Manual                           |
@@ -40,7 +40,7 @@ For focused, domain-specific agents like this network assistant, a smaller 9B-pa
 
 | Before (Step 3)           | After (Step 4)                                           |
 | ------------------------- | -------------------------------------------------------- |
-| LLM: Claude Haiku (cloud) | LLM: Qwen3.5-9B (on-prem)                                |
+| LLM: OpenAI gpt-5-mini (cloud) | LLM: Qwen3.5-9B (on-prem)                          |
 | Tools: Meraki only        | Tools: Meraki + Nexus + Intersight + ITSM + ThousandEyes |
 | Persona: Meraki only      | Persona: 5 tools listed                                  |
 
@@ -55,15 +55,15 @@ For focused, domain-specific agents like this network assistant, a smaller 9B-pa
 2. Search for **OpenAI Chat Model** (N8N uses this type for any OpenAI-compatible API).
 3. In the node settings, select the pre-configured **QWEN** credential.
 4. Draw a wire from `Qwen3 LLM` → Agent's **AI Language Model** input.
-5. Disconnect the existing Claude wire (click it, press Delete).
-6. Keep the Claude node on the canvas but unconnected — you will A/B test with it later.
+5. Disconnect the existing OpenAI wire (click it, press Delete).
+6. Keep the OpenAI node on the canvas but unconnected — you will A/B test with it later.
 
 ### Option B — Import the Pre-Built Workflow
 
 1. In the workshop N8N instance, create a new workflow.
-2. Import `workflow.json` from this folder.
-3. If prompted about missing credentials, select the pre-configured shared credentials from the dropdown — the **QWEN** credential for the Qwen node and the **Anthropic** credential for the Claude node.
-4. The `Anthropic Chat Model` node is kept but disconnected — use it to A/B test responses.
+2. Import `step4-workflow.json` from this folder.
+3. If prompted about missing credentials, select the pre-configured shared credentials from the dropdown — the **QWEN** credential for the Qwen node and the **OpenAI** credential for the OpenAI node.
+4. The `OpenAI Chat Model` node is kept but disconnected — use it to A/B test responses.
 5. Save and Activate.
 
 ### What is an OpenAI-Compatible API?
@@ -112,9 +112,9 @@ You are a concise, factual network engineering assistant with access to these MC
 
 ## Exercises
 
-### Exercise 1 — Compare Qwen vs. Claude on the same question
+### Exercise 1 — Compare Qwen vs. OpenAI on the same question
 
-Ask the same question twice — first with Qwen active, then swap the LLM connection to Claude and ask again:
+Ask the same question twice — first with Qwen active, then swap the LLM connection to the OpenAI node and ask again:
 
 ```
 What clients are connected to the Meraki network? Summarize in 3 bullet points.
@@ -183,7 +183,7 @@ Watch the agent orchestrate calls across multiple MCP servers and synthesize a c
 
 1. Ask a complex cross-domain question with Qwen active. Note the response time and quality.
 2. Disconnect Qwen from the agent's LLM input.
-3. Connect Claude Haiku to the agent's LLM input.
+3. Connect the OpenAI Chat Model node to the agent's LLM input.
 4. Ask the same question.
 5. Discuss: for this type of structured, tool-based network ops query, how much quality difference is there? Is the privacy benefit of Qwen worth the capability tradeoff?
 

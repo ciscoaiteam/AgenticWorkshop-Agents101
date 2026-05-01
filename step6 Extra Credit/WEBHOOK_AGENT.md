@@ -104,7 +104,7 @@ curl -s -X POST \
   -d '{
     "version": "0.1",
     "sentAt": "2026-04-28T18:00:00Z",
-    "networkId": "L_3705899543372507602",
+    "networkId": "L_3705899543372507424",
     "networkName": "Main Office",
     "deviceSerial": "Q2AB-1234-5678",
     "deviceName": "Main-AP-01",

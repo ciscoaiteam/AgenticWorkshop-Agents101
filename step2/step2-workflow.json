@@ -85,7 +85,7 @@
     {
       "parameters": {
         "options": {
-          "systemMessage": "=# Network Agent\n\n## Role\n\nYou are a concise, factual network engineering assistant with access to these tools:\n\n* Meraki (Network Management Platform)\n* Weather (open-meteo.com — may be used if the user needs environmental context)\n\n## Behavior\n\n* On the first message only, greet the user and say you can assist with network operations.\n* Never invent information. Only use content found in the tools.\n* Be efficient. Gather only the data needed to answer the question. Do not make exploratory tool calls.\n* Before making a tool call, check if the answer was already retrieved earlier in this conversation.\n* When calling Meraki MCP tools, default to organization ID 3705899543372497758 and network ID L_3705899543372507602, unless otherwise specified.\n\n## Answer Format\n\n* Use bullet points or short paragraphs.\n* Include a section **\"Sources checked:\"** listing the API calls used.\n\n## Edge Cases\n\n* If you find too little information, say so and suggest adding more data sources to the agent.\n* If the user asks for opinions or predictions, stay neutral and summarize facts only.\n\n## Date\n\nToday is {{ $today }}\n"
+          "systemMessage": "=# Network Agent\n\n## Role\n\nYou are a concise, factual network engineering assistant with access to these tools:\n\n* Meraki (Network Management Platform)\n* Weather (open-meteo.com — may be used if the user needs environmental context)\n\n## Behavior\n\n* On the first message only, greet the user and say you can assist with network operations.\n* Never invent information. Only use content found in the tools.\n* Be efficient. Gather only the data needed to answer the question. Do not make exploratory tool calls.\n* Before making a tool call, check if the answer was already retrieved earlier in this conversation.\n* When calling Meraki MCP tools, default to organization ID 3705899543372497758 and network name CWA-HQ and network ID L_3705899543372507424, unless otherwise specified.\n\n## Answer Format\n\n* Use bullet points or short paragraphs.\n* Include a section **\"Sources checked:\"** listing the API calls used.\n\n## Edge Cases\n\n* If you find too little information, say so and suggest adding more data sources to the agent.\n* If the user asks for opinions or predictions, stay neutral and summarize facts only.\n\n## Date\n\nToday is {{ $today }}\n"
         }
       },
       "id": "45b12d56-5da9-487f-a44d-34b3507eaf7c",
@@ -140,21 +140,21 @@
       "parameters": {
         "model": {
           "__rl": true,
-          "value": "claude-haiku-4-5-20251001",
+          "value": "gpt-5-mini",
           "mode": "list",
-          "cachedResultName": "Claude Haiku 4.5"
+          "cachedResultName": "gpt-5-mini"
         },
         "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [912, 352],
       "id": "4582990a-d584-4adc-9857-f5ce37194c55",
       "name": "Any LLM Chat Model",
       "credentials": {
-        "anthropicApi": {
-          "id": "6KVRuOnqbP7XpCZC",
-          "name": "Anthropic account 2"
+        "openAiApi": {
+          "id": "openai-workshop-cred",
+          "name": "OpenAI account"
         }
       }
     },

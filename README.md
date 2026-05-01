@@ -10,7 +10,7 @@ A hands-on, progressive workshop that teaches the fundamentals of agentic AI wor
 | Component           | What it does                                                         | Where you see it                              |
 | ------------------- | -------------------------------------------------------------------- | --------------------------------------------- |
 | **Input / Trigger** | Accepts a user message to start the workflow                         | Chat Trigger node                             |
-| **LLM**             | The "brain" — reasons, plans, and decides which tools to call        | Claude Haiku model node                       |
+| **LLM**             | The "brain" — reasons, plans, and decides which tools to call        | OpenAI Chat Model node                        |
 | **Agent Persona**   | System prompt that defines the assistant's role, rules, and tone     | System Message inside the Agent node          |
 | **Memory**          | Stores recent messages so the agent stays on-topic across turns      | Window Buffer Memory node                     |
 | **Tools / MCP**     | External capabilities the agent can call (APIs, databases, services) | Weather HTTP tool, RSS tool, MCP Client nodes |
@@ -41,6 +41,42 @@ Bot                                only)       Intersight
 
 ---
 
+## Getting Started
+
+### Step 0a — Download the Workshop Files
+
+1. Go to the workshop GitHub repository in your browser:
+  `**https://github.com/ciscoaiteam/AgenticWorkshop-Agents101*`*
+2. Click the green **"Code"** button, then select **"Download ZIP"**.
+3. Save and unzip the file to a location you can easily find (e.g. your Desktop).
+4. You now have all workflow JSON files and READMEs locally.
+
+### Step 0b — Import StartHere.json into N8N
+
+1. Log in to the workshop N8N instance using the URL and login credentials provided by your session proctor.
+2. Click **"+"** to create a new workflow.
+3. In the top-right menu (three dots ⋯), select **"Import from file"**.
+4. Navigate to the unzipped folder and select `**StartHere.json`**.
+5. Click **Save**.
+
+### Step 0c — Add Your OpenAI API Credential
+
+Your session proctor will provide you with an **OpenAI API key**. You need to enter it in N8N before the workflow can run.
+
+1. In your imported workflow, double-click the `**Any LLM Chat Model`** node (the orange node connected to the agent).
+2. In the **Credential** field, click **"Create new credential"**.
+3. In the credential form, set:
+  - **Name:** `OpenAI account`
+  - **API Key:** paste the key provided by your session proctor
+4. Click **Save** to store the credential.
+5. Close the node panel.
+
+> Once saved, this credential is stored in N8N and automatically available when you import later step workflows — you will not need to re-enter the key for each step.
+
+You are now running your first agentic workflow. Proceed to [Step 1](step1/Step1-README.md) to explore how it works.
+
+---
+
 ## Prerequisites
 
 ### N8N
@@ -50,19 +86,17 @@ Bot                                only)       Intersight
 
 ### Credentials
 
-All API credentials are **pre-configured** in the workshop environment. You do not need to supply your own API keys. The following are already set up for you:
+
+| Credential                            | How you get it                                                  | Used for                      |
+| ------------------------------------- | --------------------------------------------------------------- | ----------------------------- |
+| **OpenAI API key** (gpt-5-mini)       | Provided by your session proctor — you enter it once in Step 0c | LLM for Steps 1–3 and Step 5  |
+| Qwen3.5-9B (on-prem)                  | Pre-configured in the workshop environment                      | LLM for Step 4                |
+| Meraki MCP server                     | Pre-configured in the workshop environment                      | Steps 2–4                     |
+| ThousandEyes bearer token             | Pre-configured in the workshop environment                      | Step 5                        |
+| Nexus / Intersight / ITSM MCP servers | Pre-configured in the workshop environment                      | Step 4 (internal lab cluster) |
 
 
-| Credential                            | Used for                      |
-| ------------------------------------- | ----------------------------- |
-| Anthropic (Claude Haiku)              | LLM for Steps 1–3 and Step 5  |
-| Qwen3.5-9B (on-prem)                  | LLM for Step 4                |
-| Meraki MCP server                     | Steps 2–4                     |
-| ThousandEyes bearer token             | Steps 4–5                     |
-| Nexus / Intersight / ITSM MCP servers | Step 4 (internal lab cluster) |
-
-
-If a node shows a credential error after import, ask your facilitator to re-link the shared credential.
+If a node shows a credential error after import, re-link it using the credential you created in Step 0c, or ask your session proctor for help.
 
 ---
 
@@ -71,8 +105,8 @@ If a node shows a credential error after import, ask your facilitator to re-link
 1. Log in to the workshop N8N instance using the URL and credentials provided by your facilitator.
 2. Click **"+"** to create a new workflow.
 3. In the top-right menu (three dots), select **Import from file**.
-4. Upload the `workflow.json` from the relevant step folder.
-5. If prompted about missing credentials, select the matching shared credential from the dropdown — do not create new ones.
+4. Upload the `stepN-workflow.json` from the relevant step folder (e.g. `step1-workflow.json` for Step 1).
+5. If prompted about a missing credential on the LLM node, select the `**OpenAI account`** credential you created in Step 0c. All other credentials are pre-configured — select them from the dropdown.
 6. Click **Save**, then **Activate** the workflow.
 7. Open the **Chat** panel and start asking questions.
 
@@ -103,20 +137,20 @@ Agentic101/
 ├── EndGoal.json             ← Final all-MCP workflow with Qwen (reference)
 ├── step1/
 │   ├── Step1-README.md
-│   └── workflow.json
+│   └── step1-workflow.json
 ├── step2/                   ← Meraki MCP + Network Eng Persona (combined)
 │   ├── Step2-README.md
-│   └── workflow.json
+│   └── step2-workflow.json
 ├── step3/
 │   ├── Step3-README.md
-│   └── workflow.json
+│   └── step3-workflow.json
 ├── step4/
 │   ├── Step4-README.md
-│   └── workflow.json
+│   └── step4-workflow.json
 ├── step5/                   ← Optional ThousandEyes deep-dive
 │   ├── Step5-README.md
-│   └── workflow.json
-└── step7 Extra Credit/
+│   └── step5-workflow.json
+└── step6 Extra Credit/
     ├── WEBHOOK_AGENT.md     ← Trigger an agent from any external event (no chat required)
     ├── webhook-agent.json   ← N8N workflow for the webhook agent
     └── MCP_SCANNER.md       ← Scan MCP servers for security threats

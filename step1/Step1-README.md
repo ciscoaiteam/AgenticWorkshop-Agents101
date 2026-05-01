@@ -15,7 +15,7 @@ Every agentic workflow has five core components:
 | ----------------------- | --------------------------------------------------- | ------------------------------------- |
 | **Input**               | Accepts the user's message                          | `Example Chat` (Chat Trigger)         |
 | **Agent**               | Reasons, plans, decides which tools to use          | `Your First AI Agent`                 |
-| **LLM**                 | The language model that powers the agent's thinking | `Any LLM Chat Model` (Claude Haiku)   |
+| **LLM**                 | The language model that powers the agent's thinking | `Any LLM Chat Model` (OpenAI gpt-5-mini) |
 | **Memory**              | Stores recent conversation turns for context        | `Conversation Memory` (Window Buffer) |
 | **Tools (not yet MCP)** | External capabilities the agent can call            | `Get Weather` + `Get News`            |
 
@@ -38,7 +38,7 @@ Every agentic workflow has five core components:
 1. Log in to the workshop N8N instance (URL and credentials provided by your facilitator).
 2. Click **"+"** to create a new workflow.
 3. Click the menu (three dots, top right) → **Import from file**.
-4. Upload `workflow.json` from this folder.
+4. Upload `step1-workflow.json` from this folder.
 5. If prompted about a missing credential, select the pre-configured shared credential from the dropdown.
 6. Click **Save**, then **Activate** the workflow.
 

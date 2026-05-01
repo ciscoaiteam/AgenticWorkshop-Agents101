@@ -107,7 +107,7 @@ You are a concise, factual network engineering assistant with access to these to
 * Be efficient. Gather only the data needed to answer the question.
 * When calling Meraki MCP tools, default to:
     organization ID: 3705899543372497758
-    network ID: L_3705899543372507602
+    network ID: L_3705899543372507424
 
 ## Answer Format
 * Use bullet points or short paragraphs.
@@ -119,7 +119,7 @@ You are a concise, factual network engineering assistant with access to these to
 ### Setup Option B (If manual edit did not work) — Import the Pre-Built Workflow
 
 1. In the workshop N8N instance, create a new workflow.
-2. Import `workflow.json` from this folder.
+2. Import `step2-workflow.json` from this folder.
 3. If prompted about a missing credential, select the pre-configured shared credential from the dropdown.
 4. The `Meraki MCP Client` requires no authentication in this workshop environment.
 5. Save and Activate.
@@ -172,7 +172,7 @@ The point of having an AI agent is to combine what LLMs are good at: Reasoning, 
 I need to improve security on this network, what can I do to make it more secure? 
 ```
 
-### We are using GPT 5-mini, which is small and has limited reasoning. Models such as Claude Mythos are much better at tackling this sort of reasoning question, especially when they have credentials and tools to poke and prode.
+### We are using gpt-5-mini, which is a lightweight model. It might struggle with this.  Larger models such as GPT-4o or o3 are better at complex reasoning questions, especially when given credentials and tools to explore the environment.
 
 ---
 
