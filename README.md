@@ -45,16 +45,14 @@ Bot                                only)       Intersight
 
 ### Step 0a — Download the Workshop Files
 
-1. Go to the workshop GitHub repository in your browser:
-   **[https://github.com/ciscoaiteam/AgenticWorkshop-Agents101](https://github.com/ciscoaiteam/AgenticWorkshop-Agents101)**
-2. Click the green **"Code"** button, then select **"Download ZIP"**.
-3. Save and unzip the file to a location you can easily find (e.g. your Desktop).
-4. You now have all workflow JSON files and READMEs locally.
+1. At the top of this page click the green **"Code"** button, then select **"Download ZIP"**.
+2. Save and unzip the file to a location you can easily find (e.g. your Desktop).
+3. You now have all workflow JSON files and READMEs locally.
 
 ### Step 0b — Import StartHere.json into N8N
 
 1. Open the workshop N8N instance: **[https://n8n.apps.rcdnailab01.ciscoailabs.com/](https://n8n.apps.rcdnailab01.ciscoailabs.com/)**
-   Log in with the credentials provided by your session proctor.
+  Log in with the credentials provided by your session proctor.
 2. Click **"+"** to create a new workflow.
 3. In the top-right menu (three dots ⋯), select **"Import from file"**.
 4. Navigate to the unzipped folder and select `**StartHere.json`**.
@@ -78,12 +76,27 @@ You are now running your first agentic workflow. Proceed to [Step 1](step1/Step1
 
 ---
 
+## Key Concepts
+
+### What is MCP?
+
+Model Context Protocol (MCP) is an open standard for giving AI agents access to external tools and data. Instead of hard-coding a single API call, an MCP server exposes many tools that the agent can discover and call dynamically. This makes agents far more capable and reusable.
+
+### Why does the agent persona matter?
+
+The system prompt is the agent's "job description." The same LLM with a weather-bot persona behaves very differently from one with a network-engineer persona. Changing the persona is free and immediate — no retraining required.
+
+### Why limit the toolset?
+
+Research and practice consistently show that giving an LLM too many tools increases hallucination and reduces task accuracy. A focused toolset (under ~15 tools) keeps the agent reliable and predictable.
+
+---
+
 ## Prerequisites
 
 ### N8N
 
 - Access to the workshop N8N instance at **[https://n8n.apps.rcdnailab01.ciscoailabs.com/](https://n8n.apps.rcdnailab01.ciscoailabs.com/)** — your session proctor will provide login credentials
-- Basic familiarity with dragging nodes on a canvas
 
 ### Credentials
 
@@ -98,34 +111,6 @@ You are now running your first agentic workflow. Proceed to [Step 1](step1/Step1
 
 
 If a node shows a credential error after import, re-link it using the credential you created in Step 0c, or ask your session proctor for help.
-
----
-
-## How to Import a Workflow into N8N
-
-1. Open **[https://n8n.apps.rcdnailab01.ciscoailabs.com/](https://n8n.apps.rcdnailab01.ciscoailabs.com/)** and log in with the credentials provided by your session proctor.
-2. Click **"+"** to create a new workflow.
-3. In the top-right menu (three dots), select **Import from file**.
-4. Upload the `stepN-workflow.json` from the relevant step folder (e.g. `step1-workflow.json` for Step 1).
-5. If prompted about a missing credential on the LLM node, select the `**OpenAI account`** credential you created in Step 0c. All other credentials are pre-configured — select them from the dropdown.
-6. Click **Save**, then **Activate** the workflow.
-7. Open the **Chat** panel and start asking questions.
-
----
-
-## Key Concepts
-
-### What is MCP?
-
-Model Context Protocol (MCP) is an open standard for giving AI agents access to external tools and data. Instead of hard-coding a single API call, an MCP server exposes many tools that the agent can discover and call dynamically. This makes agents far more capable and reusable.
-
-### Why does the agent persona matter?
-
-The system prompt is the agent's "job description." The same LLM with a weather-bot persona behaves very differently from one with a network-engineer persona. Changing the persona is free and immediate — no retraining required.
-
-### Why limit the toolset?
-
-Research and practice consistently show that giving an LLM too many tools increases hallucination and reduces task accuracy. A focused toolset (under ~15 tools) keeps the agent reliable and predictable.
 
 ---
 
