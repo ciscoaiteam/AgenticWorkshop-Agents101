@@ -46,14 +46,15 @@ Bot                                only)       Intersight
 ### Step 0a — Download the Workshop Files
 
 1. Go to the workshop GitHub repository in your browser:
-  `**https://github.com/ciscoaiteam/AgenticWorkshop-Agents101*`*
+   **[https://github.com/ciscoaiteam/AgenticWorkshop-Agents101](https://github.com/ciscoaiteam/AgenticWorkshop-Agents101)**
 2. Click the green **"Code"** button, then select **"Download ZIP"**.
 3. Save and unzip the file to a location you can easily find (e.g. your Desktop).
 4. You now have all workflow JSON files and READMEs locally.
 
 ### Step 0b — Import StartHere.json into N8N
 
-1. Log in to the workshop N8N instance using the URL and login credentials provided by your session proctor.
+1. Open the workshop N8N instance: **[https://n8n.apps.rcdnailab01.ciscoailabs.com/](https://n8n.apps.rcdnailab01.ciscoailabs.com/)**
+   Log in with the credentials provided by your session proctor.
 2. Click **"+"** to create a new workflow.
 3. In the top-right menu (three dots ⋯), select **"Import from file"**.
 4. Navigate to the unzipped folder and select `**StartHere.json`**.
@@ -81,7 +82,7 @@ You are now running your first agentic workflow. Proceed to [Step 1](step1/Step1
 
 ### N8N
 
-- Access to the workshop's **N8N on-premise instance** — your facilitator will provide the URL and login credentials
+- Access to the workshop N8N instance at **[https://n8n.apps.rcdnailab01.ciscoailabs.com/](https://n8n.apps.rcdnailab01.ciscoailabs.com/)** — your session proctor will provide login credentials
 - Basic familiarity with dragging nodes on a canvas
 
 ### Credentials
@@ -102,7 +103,7 @@ If a node shows a credential error after import, re-link it using the credential
 
 ## How to Import a Workflow into N8N
 
-1. Log in to the workshop N8N instance using the URL and credentials provided by your facilitator.
+1. Open **[https://n8n.apps.rcdnailab01.ciscoailabs.com/](https://n8n.apps.rcdnailab01.ciscoailabs.com/)** and log in with the credentials provided by your session proctor.
 2. Click **"+"** to create a new workflow.
 3. In the top-right menu (three dots), select **Import from file**.
 4. Upload the `stepN-workflow.json` from the relevant step folder (e.g. `step1-workflow.json` for Step 1).

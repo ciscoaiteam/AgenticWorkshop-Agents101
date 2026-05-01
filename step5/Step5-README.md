@@ -7,11 +7,13 @@
 ## Background: Why ThousandEyes + Meraki?
 
 Meraki tells you what the **network** is doing:
+
 - Which devices are connected
 - What the configuration looks like
 - What alerts the infrastructure has raised
 
 ThousandEyes tells you what **users and endpoints** are experiencing:
+
 - Whether a specific endpoint agent can reach the internet
 - Where packet loss or latency is occurring on the network path
 - What events or outages have been detected from the user's perspective
@@ -38,10 +40,12 @@ This kind of cross-domain correlation is where agentic workflows genuinely shine
 
 ## What Changes in This Step
 
-| Before (Step 3) | After (Step 5) |
-|---|---|
+
+| Before (Step 3)                 | After (Step 5)                                         |
+| ------------------------------- | ------------------------------------------------------ |
 | Tools: `Meraki MCP Client` only | Tools: `ThousandEyes MCP Client` + `Meraki MCP Client` |
-| Persona: Meraki only | Persona: Meraki + ThousandEyes, with `aid` rule |
+| Persona: Meraki only            | Persona: Meraki + ThousandEyes, with `aid` rule        |
+
 
 ---
 
@@ -49,15 +53,17 @@ This kind of cross-domain correlation is where agentic workflows genuinely shine
 
 This workflow enables a curated subset of ThousandEyes tools (not the full catalog):
 
-| Tool | What it does |
-|---|---|
-| `get_account_groups` | Lists ThousandEyes account groups (use to get the `aid`) |
-| `search_outages` | Searches for detected outages in a time range |
-| `list_events` | Lists events (alerts, anomalies) |
-| `get_event` | Gets details on a specific event |
-| `list_endpoint_agents` | Lists all endpoint agents registered in the account |
-| `list_endpoint_agent_tests` | Lists scheduled tests for an endpoint agent |
+
+| Tool                         | What it does                                             |
+| ---------------------------- | -------------------------------------------------------- |
+| `get_account_groups`         | Lists ThousandEyes account groups (use to get the `aid`) |
+| `search_outages`             | Searches for detected outages in a time range            |
+| `list_events`                | Lists events (alerts, anomalies)                         |
+| `get_event`                  | Gets details on a specific event                         |
+| `list_endpoint_agents`       | Lists all endpoint agents registered in the account      |
+| `list_endpoint_agent_tests`  | Lists scheduled tests for an endpoint agent              |
 | `get_endpoint_agent_metrics` | Gets performance metrics (latency, loss) for an endpoint |
+
 
 Selecting a subset of tools keeps the agent focused and avoids token overhead from tools it will never need in this context.
 
@@ -72,12 +78,13 @@ The ThousandEyes API bearer token is **pre-configured** in the workshop environm
 ### Option A — Edit Your Step 3 (or Step 4) Workflow Manually
 
 **Add the ThousandEyes MCP Client:**
+
 1. Click the **"+"** (add node) button in the canvas.
 2. Search for **MCP Client Tool** and select it.
 3. In the node settings:
-   - **MCP Endpoint URL:** `https://api.thousandeyes.com/mcp`
-   - **Authentication:** Header Auth — select the pre-configured **Header Auth** credential from the dropdown
-   - Under **Include Tools**, select: `get_account_groups`, `search_outages`, `list_events`, `get_event`, `list_endpoint_agents`, `list_endpoint_agent_tests`, `get_endpoint_agent_metrics`
+  - **MCP Endpoint URL:** `https://api.thousandeyes.com/mcp`
+  - **Authentication:** Header Auth — select the pre-configured **Header Auth** credential from the dropdown
+  - Under **Include Tools**, select: `get_account_groups`, `search_outages`, `list_events`, `get_event`, `list_endpoint_agents`, `list_endpoint_agent_tests`, `get_endpoint_agent_metrics`
 4. Connect `ThousandEyes MCP Client` → Agent's **Tools** input.
 
 ### Option B — Import the Pre-Built Workflow
@@ -89,6 +96,7 @@ The ThousandEyes API bearer token is **pre-configured** in the workshop environm
 5. Save and Activate.
 
 **Update the system prompt:**
+
 1. Double-click the AI Agent node.
 2. Add these lines to the Behavior section of the System Message:
 
@@ -97,8 +105,8 @@ The ThousandEyes API bearer token is **pre-configured** in the workshop environm
   in every tool call. Never omit this parameter.
 ```
 
-3. Update the Role section to mention ThousandEyes.
-4. Save.
+1. Update the Role section to mention ThousandEyes.
+2. Save.
 
 ---
 
@@ -133,6 +141,7 @@ I'm experiencing slow internet. Can you check both Meraki and ThousandEyes to se
 ```
 
 Watch the execution panel — you should see the agent:
+
 1. Call a ThousandEyes tool (e.g., `search_outages` or `list_events`)
 2. Call a Meraki tool (e.g., `getNetworkClients` or device status)
 3. Synthesize both results into a single, correlated answer
@@ -154,6 +163,7 @@ Which endpoint agent has the worst packet loss, and does Meraki show anything un
 ```
 
 This requires the agent to:
+
 1. List endpoint agents and their metrics (ThousandEyes)
 2. Identify the worst performer
 3. Look up that device in Meraki
@@ -192,3 +202,4 @@ All from a no-code visual workflow in N8N.
 - Add N8N workflow actions (e.g., send a Webex message when the agent finds an issue)
 - Experiment with different LLMs (GPT-4o, Gemini, local models via Ollama)
 - Tune the system prompt for your specific team's terminology and processes
+
