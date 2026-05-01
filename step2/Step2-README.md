@@ -81,15 +81,7 @@ You are a concise, factual network engineering assistant with access to these to
 
 ## Setup
 
-### Option A — Import the Pre-Built Workflow
-
-1. In the workshop N8N instance, create a new workflow.
-2. Import `workflow.json` from this folder.
-3. If prompted about a missing credential, select the pre-configured shared credential from the dropdown.
-4. The `Meraki MCP Client` requires no authentication in this workshop environment.
-5. Save and Activate.
-
-### Option B — Modify Your Step 1 Workflow Manually
+### Option A — Modify Your Step 1 Workflow Manually
 
 **Part 1 — Replace the News tool with Meraki MCP:**
 
@@ -105,6 +97,14 @@ You are a concise, factual network engineering assistant with access to these to
 2. Scroll to the **System Message** field.
 3. Replace the entire contents with the network engineering persona shown above.
 4. Save and Activate.
+
+### Option B — Import the Pre-Built Workflow
+
+1. In the workshop N8N instance, create a new workflow.
+2. Import `workflow.json` from this folder.
+3. If prompted about a missing credential, select the pre-configured shared credential from the dropdown.
+4. The `Meraki MCP Client` requires no authentication in this workshop environment.
+5. Save and Activate.
 
 ---
 

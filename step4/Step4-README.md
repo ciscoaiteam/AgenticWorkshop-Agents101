@@ -49,15 +49,7 @@ For focused, domain-specific agents like this network assistant, a smaller 9B-pa
 
 ## Part 1 — Swap to Qwen On-Premise LLM
 
-### Setup — Import the Pre-Built Workflow
-
-1. In the workshop N8N instance, create a new workflow.
-2. Import `workflow.json` from this folder.
-3. If prompted about missing credentials, select the pre-configured shared credentials from the dropdown — the **QWEN** credential for the Qwen node and the **Anthropic** credential for the Claude node.
-4. The `Anthropic Chat Model` node is kept but disconnected — use it to A/B test responses.
-5. Save and Activate.
-
-### Setup — Manual Edit from Step 3
+### Option A — Edit Your Step 3 Workflow Manually
 
 1. In your Step 3 workflow, click **"+"** to add a new node.
 2. Search for **OpenAI Chat Model** (N8N uses this type for any OpenAI-compatible API).
@@ -65,6 +57,14 @@ For focused, domain-specific agents like this network assistant, a smaller 9B-pa
 4. Draw a wire from `Qwen3 LLM` → Agent's **AI Language Model** input.
 5. Disconnect the existing Claude wire (click it, press Delete).
 6. Keep the Claude node on the canvas but unconnected — you will A/B test with it later.
+
+### Option B — Import the Pre-Built Workflow
+
+1. In the workshop N8N instance, create a new workflow.
+2. Import `workflow.json` from this folder.
+3. If prompted about missing credentials, select the pre-configured shared credentials from the dropdown — the **QWEN** credential for the Qwen node and the **Anthropic** credential for the Claude node.
+4. The `Anthropic Chat Model` node is kept but disconnected — use it to A/B test responses.
+5. Save and Activate.
 
 ### What is an OpenAI-Compatible API?
 

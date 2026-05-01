@@ -37,20 +37,20 @@ In Step 2, the agent had two tools: `Get Weather` and `Meraki MCP Client`. For a
 
 ## Setup
 
-### Option A — Import the Pre-Built Workflow
-
-1. In the workshop N8N instance, create a new workflow.
-2. Import `workflow.json` from this folder.
-3. If prompted about a missing credential, select the pre-configured shared credential from the dropdown.
-4. Save and Activate.
-
-### Option B — Edit Your Step 2 Workflow Manually
+### Option A — Edit Your Step 2 Workflow Manually
 
 1. Click the `Get Weather` node on the canvas.
 2. Press **Delete** (or right-click → Delete).
 3. The wire to the agent is automatically removed.
 4. Double-click `Your First AI Agent` → remove the weather tool mention from the System Message.
 5. Save.
+
+### Option B — Import the Pre-Built Workflow
+
+1. In the workshop N8N instance, create a new workflow.
+2. Import `workflow.json` from this folder.
+3. If prompted about a missing credential, select the pre-configured shared credential from the dropdown.
+4. Save and Activate.
 
 ---
 
