@@ -51,7 +51,7 @@ Every agentic workflow has five core components:
 Open the Chat panel and try:
 
 ```
-What should I wear to visit San Francisco today?
+What should I wear to visit the Golden Gate Bridge today?
 ```
 
 Watch the execution panel on the right. You will see:
@@ -59,12 +59,6 @@ Watch the execution panel on the right. You will see:
 - The agent receiving your message
 - The `Get Weather` tool being called with San Francisco's coordinates
 - The agent composing a clothing recommendation from the weather data
-
-Try different cities:
-
-```
-What's the weather like in Tokyo this week?
-```
 
 ### Exercise 2 — Use the news tool for small talk
 
@@ -102,7 +96,7 @@ The persona controls:
 - What tone it uses
 - What rules it follows
 
-You will change this persona in Step 3.
+You will change this persona in Step 2.
 
 ---
 

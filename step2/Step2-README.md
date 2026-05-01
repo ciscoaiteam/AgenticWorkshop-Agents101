@@ -40,21 +40,58 @@ Changing the persona is free and instant — no retraining, no new model. It is 
 
 ## What Changes in This Step
 
-| Before (Step 1) | After (Step 2) |
-|---|---|
-| `Get News` RSS tool | `Meraki MCP Client` |
-| `Get Weather` HTTP tool | `Get Weather` (unchanged — removed in Step 3) |
+
+| Before (Step 1)                | After (Step 2)                                 |
+| ------------------------------ | ---------------------------------------------- |
+| `Get News` RSS tool            | `Meraki MCP Client`                            |
+| `Get Weather` HTTP tool        | `Get Weather` (unchanged — removed in Step 3)  |
 | Persona: friendly n8n demo bot | Persona: concise network engineering assistant |
-| No citation rules | Always cites API calls used |
-| No default network IDs | Knows default org ID and network ID |
+| No citation rules              | Always cites API calls used                    |
+| No default network IDs         | Knows default org ID and network ID            |
+
 
 Note: the weather tool stays connected for now — this intentional mismatch (a network engineer with a weather tool) motivates Step 3.
 
 ---
 
+## Setup
+
+### Modify Your Step 1 Workflow Manually
+
+**Part 1 — Replace the News tool with Meraki MCP:**
+
+1. Click the `Get News` node on the canvas and press **Delete**.
+2. Click **"+"** under the agent's **Tools** input connector.
+3. Search for **MCP Client Tool** and select it.
+4. Under Paramaters, Set **Endpoint URL** to `https://selent-mcp-selent-mcp.apps.rcdnailab01.ciscoailabs.com/mcp`
+5. Connect the new node → Agent's **Tools** input.
+
+---
+
+### Crtically Important — New tools, Old Persona
+
+Your agent has new tools, but the same generic persona. This lack of context for the agents intent or purpose can make answering questions that lack context or specific details challenging. Depending on the model and prior conversations, it might be able to reason out an answer, but it might also burn up all your tokens trying to work it out. 
+
+Try a vague Meraki question such as:
+
+```
+What devices are currently connected to my network?
+```
+
+Did it answer quickly? Gracefully? Without further follow-ups? Your agents behaviour is heavily influenced by the *System Message!*
+
+## Update the Agent Persona
+
+**Part 2 — Update the agent persona:**
+
+1. Double-click the `Your First AI Agent` node.
+2. Scroll to the **System Message** field.
+3. Replace the entire contents with the network engineering persona shown above.
+4. Save and Activate.
+
 ## The Network Engineering Persona
 
-The system message is updated to:
+Here an is example for an updated system message. We provide the agent with context around which tools are available, what its behaviour should be, and how it should answer. You might also notice there is provided context for which Meraki organization ID and network ID it should default to, this prevents the agent from asking you for an ID (required context) every time. Try removing it and see what happens.
 
 ```
 # Network Agent
@@ -79,26 +116,7 @@ You are a concise, factual network engineering assistant with access to these to
 
 ---
 
-## Setup
-
-### Option A — Modify Your Step 1 Workflow Manually
-
-**Part 1 — Replace the News tool with Meraki MCP:**
-
-1. Click the `Get News` node on the canvas and press **Delete**.
-2. Click **"+"** under the agent's **Tools** input connector.
-3. Search for **MCP Client Tool** and select it.
-4. Set **MCP Endpoint URL** to `https://selent-mcp-selent-mcp.apps.rcdnailab01.ciscoailabs.com/mcp`
-5. Connect the new node → Agent's **Tools** input.
-
-**Part 2 — Update the agent persona:**
-
-1. Double-click the `Your First AI Agent` node.
-2. Scroll to the **System Message** field.
-3. Replace the entire contents with the network engineering persona shown above.
-4. Save and Activate.
-
-### Option B — Import the Pre-Built Workflow
+### Setup Option B (If manual edit did not work) — Import the Pre-Built Workflow
 
 1. In the workshop N8N instance, create a new workflow.
 2. Import `workflow.json` from this folder.
@@ -119,10 +137,11 @@ The agent should now greet you as a network assistant, not as a generic demo bot
 ### Exercise 2 — Ask a Meraki question and check the format
 
 ```
-What clients are currently connected to my network?
+What cameras are currently connected to my network?
 ```
 
 Watch the execution panel — the agent:
+
 1. Discovers which Meraki tool to call (e.g., `getNetworkClients`)
 2. Calls it with the default org and network IDs from the persona
 3. Returns a formatted list with a **"Sources checked:"** section at the bottom
@@ -140,18 +159,20 @@ The agent answers both parts using two different tools. Notice it still answers 
 ### Exercise 4 — Test the "never invent" rule
 
 ```
-What is the historical uptime percentage of my network over the past year?
+What is the status of device with hostname "LAS-IS-THE-BEST"
 ```
 
 The agent should say it does not have that data. The persona instructs it to never invent information — verify it complies.
 
-### Exercise 5 — Confirm the news tool is gone
+### Exercise 5 — AI reasoning with network context
+
+The point of having an AI agent is to combine what LLMs are good at: Reasoning, summarization, etc. with YOUR network's state. Try:
 
 ```
-What are the top tech news stories today?
+I need to improve security on this network, what can I do to make it more secure? 
 ```
 
-Without `Get News`, the agent should gracefully decline rather than hallucinate a news summary. This demonstrates that removing a tool immediately constrains the agent's scope.
+### We are using GPT 5-mini, which is small and has limited reasoning. Models such as Claude Mythos are much better at tackling this sort of reasoning question, especially when they have credentials and tools to poke and prode.
 
 ---
 

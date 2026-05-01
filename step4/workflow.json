@@ -22,7 +22,7 @@
       "id": "8e22b1f8-bcde-4530-85a8-8be326444900",
       "name": "AI Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 1.7,
+      "typeVersion": 3.1,
       "position": [-640, 144]
     },
     {

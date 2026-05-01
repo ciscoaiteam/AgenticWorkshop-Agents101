@@ -92,7 +92,7 @@
       "name": "Your First AI Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [1280, 64],
-      "typeVersion": 2.2
+      "typeVersion": 3.1
     },
     {
       "parameters": {

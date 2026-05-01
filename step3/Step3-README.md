@@ -27,17 +27,19 @@ In Step 2, the agent had two tools: `Get Weather` and `Meraki MCP Client`. For a
 
 ## What Changes in This Step
 
-| Before (Step 2) | After (Step 3) |
-|---|---|
-| Tools: `Get Weather` + `Meraki MCP Client` | Tools: `Meraki MCP Client` only |
+
+| Before (Step 2)                                 | After (Step 3)                          |
+| ----------------------------------------------- | --------------------------------------- |
+| Tools: `Get Weather` + `Meraki MCP Client`      | Tools: `Meraki MCP Client` only         |
 | Persona: Network engineer (with weather access) | Persona: Network engineer (Meraki only) |
-| System prompt mentions weather tool | System prompt updated — weather removed |
+| System prompt mentions weather tool             | System prompt updated — weather removed |
+
 
 ---
 
 ## Setup
 
-### Option A — Edit Your Step 2 Workflow Manually
+### Edit Your Step 2 Workflow Manually
 
 1. Click the `Get Weather` node on the canvas.
 2. Press **Delete** (or right-click → Delete).
@@ -45,53 +47,20 @@ In Step 2, the agent had two tools: `Get Weather` and `Meraki MCP Client`. For a
 4. Double-click `Your First AI Agent` → remove the weather tool mention from the System Message.
 5. Save.
 
-### Option B — Import the Pre-Built Workflow
-
-1. In the workshop N8N instance, create a new workflow.
-2. Import `workflow.json` from this folder.
-3. If prompted about a missing credential, select the pre-configured shared credential from the dropdown.
-4. Save and Activate.
-
 ---
 
-## Exercises
-
-### Exercise 1 — Confirm the agent works without weather
-
-```
-What clients are connected to my network?
-```
-
-The agent should respond normally using Meraki data.
-
-### Exercise 2 — Test graceful degradation for weather
-
-```
-What should I wear to visit San Jose today?
-```
-
-With the weather tool removed, the agent should clearly decline — not hallucinate an answer. It should suggest adding a weather tool if needed.
-
-Compare this to Step 1 where the same question triggered a real API call.
-
-### Exercise 3 — Ask the agent what tools it has
-
-```
-What tools do you have access to?
-```
-
-The agent should describe only its Meraki capabilities — no mention of weather. This confirms the persona and toolset are aligned.
-
-### Exercise 4 — Multi-turn Meraki conversation
+### Exercise Multi-turn Meraki conversation
 
 Try this sequence without refreshing:
 
 ```
 List all clients connected to the network.
 ```
+
 ```
 Which of those are wireless vs. wired?
 ```
+
 ```
 How long has the client with the highest data usage been connected?
 ```
@@ -102,15 +71,17 @@ The agent stays on-topic across all three turns, using memory to avoid re-fetchi
 
 ## Comparing Step 1 → Step 3
 
-| | Step 1 | Step 3 |
-|---|---|---|
-| Tools | Weather + News | Meraki MCP only |
-| Persona | Friendly demo bot | Network engineering assistant |
-| Weather question | Real answer | Graceful decline |
-| News question | Real answer | Graceful decline |
-| Network question | No tools for this | Full Meraki access |
-| Response format | Conversational | Structured, cites sources |
-| Reliability | Medium | High |
+
+|                  | Step 1            | Step 3                        |
+| ---------------- | ----------------- | ----------------------------- |
+| Tools            | Weather + News    | Meraki MCP only               |
+| Persona          | Friendly demo bot | Network engineering assistant |
+| Weather question | Real answer       | Graceful decline              |
+| News question    | Real answer       | Graceful decline              |
+| Network question | No tools for this | Full Meraki access            |
+| Response format  | Conversational    | Structured, cites sources     |
+| Reliability      | Medium            | High                          |
+
 
 ---
 

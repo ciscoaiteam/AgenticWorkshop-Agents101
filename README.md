@@ -29,13 +29,14 @@ Bot                                only)       Intersight
                                                + ITSM
 ```
 
-| Step | What changes | Learning objective |
-|---|---|---|
-| [Step 1](step1/Step1-README.md) | Nothing — explore the baseline | Understand the 5 components of an agentic workflow |
-| [Step 2](step2/Step2-README.md) | Replace news tool with Meraki MCP + update agent persona | Understand MCP and how system prompts shape agent behavior |
-| [Step 3](step3/Step3-README.md) | Remove weather tool | Understand how focused toolsets improve agent accuracy |
-| [Step 4](step4/Step4-README.md) | Swap to Qwen on-prem LLM + add Nexus, Intersight, ITSM MCPs | Understand data privacy tradeoffs and cross-domain ops |
-| [Step 5](step5/Step5-README.md) *(optional)* | Focused ThousandEyes + Meraki agent | Deep-dive into endpoint monitoring and cross-domain correlation |
+
+| Step                                         | What changes                                                | Learning objective                                              |
+| -------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------- |
+| [Step 1](step1/Step1-README.md)              | Nothing — explore the baseline                              | Understand the 5 components of an agentic workflow              |
+| [Step 2](step2/Step2-README.md)              | Replace news tool with Meraki MCP + update agent persona    | Understand MCP and how system prompts shape agent behavior      |
+| [Step 3](step3/Step3-README.md)              | Remove weather tool                                         | Understand how focused toolsets improve agent accuracy          |
+| [Step 4](step4/Step4-README.md)              | Swap to Qwen on-prem LLM + add Nexus, Intersight, ITSM MCPs | Understand data privacy tradeoffs and cross-domain ops          |
+| [Step 5](step5/Step5-README.md) *(optional)* | Focused ThousandEyes + Meraki agent                         | Deep-dive into endpoint monitoring and cross-domain correlation |
 
 
 ---
@@ -125,8 +126,10 @@ Agentic101/
 
 ## Extra Credit Assignments
 
-| Assignment | Concept | Files |
-|---|---|---|
+
+| Assignment                                              | Concept                                                     | Files                                                 |
+| ------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------- |
 | [Webhook-Triggered Agent](ExtraCredit/WEBHOOK_AGENT.md) | Agents run autonomously from external events, not just chat | `ExtraCredit/WEBHOOK_AGENT.md` + `webhook-agent.json` |
-| [MCP Security Scanner](ExtraCredit/MCP_SCANNER.md) | Scan MCP servers for prompt injection and tool poisoning | `ExtraCredit/MCP_SCANNER.md` + `scan-mcps.sh` |
+| [MCP Security Scanner](ExtraCredit/MCP_SCANNER.md)      | Scan MCP servers for prompt injection and tool poisoning    | `ExtraCredit/MCP_SCANNER.md` + `scan-mcps.sh`         |
+
 
