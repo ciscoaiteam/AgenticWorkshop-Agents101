@@ -1,65 +1,37 @@
-# Step 3 — Change the Agent Persona
+# Step 3 — Focus the Agent (Remove Weather Tool)
 
-**Goal:** Understand how the system prompt (agent persona) shapes agent behavior — without changing the model or the tools.
+**Goal:** Understand why a focused, minimal toolset produces a more reliable, predictable agent.
 
 ---
 
-## Background: The System Prompt is the Agent's Job Description
+## Background: The Tool Overload Problem
 
-The LLM in your workflow is a general-purpose model. Left to its own devices, it will try to be helpful to anyone about anything. The **system prompt** (also called the agent persona) transforms it into a specialist.
+Every tool you attach to an agent increases the cognitive load on the LLM. Before responding, the model must:
 
-Think of it like hiring someone: the LLM is the candidate, the tools are their skills, and the system prompt is the job description and company handbook.
+1. Read all tool descriptions
+2. Evaluate whether any tool is relevant to the current query
+3. Decide which tool to call (or not call)
+4. Parse and use the tool's output
 
-```
-Same LLM + Same Tools, Different Persona:
+When tools are unrelated to each other or to the agent's purpose, this process becomes noisy. Research and practice consistently show:
 
-Persona: "Friendly n8n demo bot"     ──► Enthusiastic, broad, casual answers
-Persona: "Network engineering assistant"  ──► Concise, factual, cites sources
-```
+- **More tools → more confusion** — the model occasionally picks the wrong tool
+- **More tools → more tokens** — tool definitions consume prompt space on every turn
+- **More tools → less predictable behavior** — harder to debug and trust
 
-Changing the persona is free, instant, and requires no retraining. It is one of the highest-leverage changes you can make to an agent.
+The rule of thumb: **keep your agent's toolset under ~15 tools, all relevant to the same domain.**
+
+In Step 2, the agent had two tools: `Get Weather` and `Meraki MCP Client`. For a network engineering assistant, weather is irrelevant. Removing it makes the agent sharper.
 
 ---
 
 ## What Changes in This Step
 
-
-| Before (Step 2)                | After (Step 3)                                 |
-| ------------------------------ | ---------------------------------------------- |
-| Persona: friendly n8n demo bot | Persona: concise network engineering assistant |
-| No rules on citation           | Always cites API calls used                    |
-| No default network context     | Knows default org ID and network ID            |
-| Tools: Weather + Meraki MCP    | Tools: Weather + Meraki MCP (unchanged)        |
-
-
-Note: The weather tool is still connected, even though the persona is now a network engineer. This creates an intentional tension — the agent *can* answer weather questions, but it feels out of place. That gets resolved in Step 4.
-
----
-
-## The New Persona
-
-The system message now reads:
-
-```
-# Network Agent
-
-## Role
-You are a concise, factual network engineering assistant with access to these tools:
-* Meraki (Network Management Platform)
-* Weather (open-meteo.com)
-
-## Behavior
-* On the first message only, greet the user and say you can assist with network operations.
-* Never invent information. Only use content found in the tools.
-* Be efficient. Gather only the data needed to answer the question.
-* When calling Meraki MCP tools, default to:
-    organization ID: 3705899543372497758
-    network ID: L_3705899543372507602
-
-## Answer Format
-* Use bullet points or short paragraphs.
-* Include a section "Sources checked:" listing the API calls used.
-```
+| Before (Step 2) | After (Step 3) |
+|---|---|
+| Tools: `Get Weather` + `Meraki MCP Client` | Tools: `Meraki MCP Client` only |
+| Persona: Network engineer (with weather access) | Persona: Network engineer (Meraki only) |
+| System prompt mentions weather tool | System prompt updated — weather removed |
 
 ---
 
@@ -74,50 +46,83 @@ You are a concise, factual network engineering assistant with access to these to
 
 ### Option B — Edit Your Step 2 Workflow Manually
 
-1. Double-click the `Your First AI Agent` node.
-2. Scroll to the **System Message** field.
-3. Replace the entire contents with the network engineering persona above (or copy from `EndGoal.json`).
-4. Save.
+1. Click the `Get Weather` node on the canvas.
+2. Press **Delete** (or right-click → Delete).
+3. The wire to the agent is automatically removed.
+4. Double-click `Your First AI Agent` → remove the weather tool mention from the System Message.
+5. Save.
 
 ---
 
 ## Exercises
 
-### Exercise 1 — Compare the greeting
-
-Open a fresh chat and just say: `Hello`
-
-With the new persona, the agent should greet you as a network assistant rather than as a general demo bot.
-
-### Exercise 2 — Ask a Meraki question and check the format
+### Exercise 1 — Confirm the agent works without weather
 
 ```
 What clients are connected to my network?
 ```
 
-Look for the **"Sources checked:"** section at the bottom. The new persona enforces this format so you always know which API calls were made.
+The agent should respond normally using Meraki data.
 
-### Exercise 3 — Test the "never invent" rule
-
-Ask something the agent cannot know from its tools:
+### Exercise 2 — Test graceful degradation for weather
 
 ```
-What is the historical uptime percentage of my network over the past year?
+What should I wear to visit San Jose today?
 ```
 
-The agent should say it does not have that data, not fabricate a number.
+With the weather tool removed, the agent should clearly decline — not hallucinate an answer. It should suggest adding a weather tool if needed.
+
+Compare this to Step 1 where the same question triggered a real API call.
+
+### Exercise 3 — Ask the agent what tools it has
+
+```
+What tools do you have access to?
+```
+
+The agent should describe only its Meraki capabilities — no mention of weather. This confirms the persona and toolset are aligned.
+
+### Exercise 4 — Multi-turn Meraki conversation
+
+Try this sequence without refreshing:
+
+```
+List all clients connected to the network.
+```
+```
+Which of those are wireless vs. wired?
+```
+```
+How long has the client with the highest data usage been connected?
+```
+
+The agent stays on-topic across all three turns, using memory to avoid re-fetching data.
+
+---
+
+## Comparing Step 1 → Step 3
+
+| | Step 1 | Step 3 |
+|---|---|---|
+| Tools | Weather + News | Meraki MCP only |
+| Persona | Friendly demo bot | Network engineering assistant |
+| Weather question | Real answer | Graceful decline |
+| News question | Real answer | Graceful decline |
+| Network question | No tools for this | Full Meraki access |
+| Response format | Conversational | Structured, cites sources |
+| Reliability | Medium | High |
 
 ---
 
 ## Key Takeaways
 
-- The system prompt is the cheapest, most powerful way to customize agent behavior.
-- Good personas include: role definition, behavioral rules, output format requirements, and relevant context (like default IDs).
-- Memory makes multi-turn conversations coherent — the agent does not forget what it already fetched.
-- Having tools that do not match the persona creates confusion. The agent might still use them, but it feels off — which is by design to motivate Step 4.
+- Removing a tool is as powerful as adding one — it eliminates a category of errors.
+- A well-focused agent is more trustworthy in production than a "do-everything" agent.
+- Graceful degradation (saying "I can't" rather than hallucinating) is a sign of good agent design.
+- The system prompt and toolset should always match each other — misalignment creates confusion.
 
 ---
 
 ## Next Step
 
-Proceed to [Step 4](../step4/Step4-README.md) — Remove irrelevant tools and focus the agent on Meraki only.
+This is a complete, focused Meraki assistant. Proceed to [Step 4](../step4/Step4-README.md) — swap the LLM to an on-premises Qwen model and expand the toolset with Nexus, Intersight, and ITSM MCP servers.

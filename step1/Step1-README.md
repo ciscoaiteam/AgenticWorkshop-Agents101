@@ -118,4 +118,4 @@ You will change this persona in Step 3.
 
 ## Next Step
 
-Proceed to [Step 2](../step2/Step2-README.md) — Replace the News tool with the Meraki MCP server.
+Proceed to [Step 2](../step2/Step2-README.md) — Replace the News tool with Meraki MCP and update the agent persona.

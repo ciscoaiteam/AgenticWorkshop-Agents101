@@ -21,23 +21,21 @@ A hands-on, progressive workshop that teaches the fundamentals of agentic AI wor
 ## Workshop Progression
 
 ```
-Step 1 ──► Step 2 ──► Step 3 ──► Step 4 ──► Step 5 ──► Step 6 (optional)
-Explore    Add        Change      Focus       On-prem     ThousandEyes
-Weather    Meraki     Persona     Toolset     Qwen LLM    
-+ News     MCP        to NetEng   (Meraki     + Nexus +
-Bot                               only)       Intersight
-                                              + ITSM
+Step 1 ──► Step 2 ──────────────► Step 3 ──► Step 4 ──► Step 5 (optional)
+Explore    Add Meraki MCP          Focus       On-prem     ThousandEyes
+Weather    + Network Eng Persona   Toolset     Qwen LLM    deep-dive
++ News     (combined)              (Meraki     + Nexus +
+Bot                                only)       Intersight
+                                               + ITSM
 ```
 
-
-| Step                                   | What changes                                                | Learning objective                                              |
-| -------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------- |
-| [Step 1](step1/Step1-README.md)              | Nothing — explore the baseline                              | Understand the 5 components of an agentic workflow              |
-| [Step 2](step2/Step2-README.md)              | Replace RSS news tool with Meraki MCP                       | Understand what tools vs. what MCP is and why it matters        |
-| [Step 3](step3/Step3-README.md)              | Update agent persona to network engineer                    | Understand how system prompts shape agent behavior              |
-| [Step 4](step4/Step4-README.md)              | Remove weather tool                                         | Understand how focused toolsets improve agent accuracy          |
-| [Step 5](step5/Step5-README.md)              | Swap to Qwen on-prem LLM + add Nexus, Intersight, ITSM MCPs | Understand data privacy tradeoffs and cross-domain ops          |
-| [Step 6](step6/Step6-README.md) *(optional)* | Focused ThousandEyes + Meraki agent                         | Deep-dive into endpoint monitoring and cross-domain correlation |
+| Step | What changes | Learning objective |
+|---|---|---|
+| [Step 1](step1/Step1-README.md) | Nothing — explore the baseline | Understand the 5 components of an agentic workflow |
+| [Step 2](step2/Step2-README.md) | Replace news tool with Meraki MCP + update agent persona | Understand MCP and how system prompts shape agent behavior |
+| [Step 3](step3/Step3-README.md) | Remove weather tool | Understand how focused toolsets improve agent accuracy |
+| [Step 4](step4/Step4-README.md) | Swap to Qwen on-prem LLM + add Nexus, Intersight, ITSM MCPs | Understand data privacy tradeoffs and cross-domain ops |
+| [Step 5](step5/Step5-README.md) *(optional)* | Focused ThousandEyes + Meraki agent | Deep-dive into endpoint monitoring and cross-domain correlation |
 
 
 ---
@@ -56,11 +54,11 @@ All API credentials are **pre-configured** in the workshop environment. You do n
 
 | Credential                            | Used for                      |
 | ------------------------------------- | ----------------------------- |
-| Anthropic (Claude Haiku)              | LLM for Steps 1–4 and Step 6  |
-| Qwen3.5-9B (on-prem)                  | LLM for Step 5                |
-| Meraki MCP server                     | Steps 2–5                     |
-| ThousandEyes bearer token             | Steps 5–6                     |
-| Nexus / Intersight / ITSM MCP servers | Step 5 (internal lab cluster) |
+| Anthropic (Claude Haiku)              | LLM for Steps 1–3 and Step 5  |
+| Qwen3.5-9B (on-prem)                  | LLM for Step 4                |
+| Meraki MCP server                     | Steps 2–4                     |
+| ThousandEyes bearer token             | Steps 4–5                     |
+| Nexus / Intersight / ITSM MCP servers | Step 4 (internal lab cluster) |
 
 
 If a node shows a credential error after import, ask your facilitator to re-link the shared credential.
@@ -99,28 +97,25 @@ Research and practice consistently show that giving an LLM too many tools increa
 
 ```
 Agentic101/
-├── README.md            ← This file
-├── StartHere.json       ← Original N8N Weather + News workflow (reference)
-├── EndGoal.json         ← Final all-MCP workflow with Qwen (reference)
+├── README.md                ← This file
+├── StartHere.json           ← Original N8N Weather + News workflow (reference)
+├── EndGoal.json             ← Final all-MCP workflow with Qwen (reference)
 ├── step1/
-│   ├── README.md
+│   ├── Step1-README.md
 │   └── workflow.json
-├── step2/
-│   ├── README.md
+├── step2/                   ← Meraki MCP + Network Eng Persona (combined)
+│   ├── Step2-README.md
 │   └── workflow.json
 ├── step3/
-│   ├── README.md
+│   ├── Step3-README.md
 │   └── workflow.json
 ├── step4/
-│   ├── README.md
+│   ├── Step4-README.md
 │   └── workflow.json
-├── step5/
-│   ├── README.md
+├── step5/                   ← Optional ThousandEyes deep-dive
+│   ├── Step5-README.md
 │   └── workflow.json
-├── step6/
-│   ├── README.md
-│   └── workflow.json
-└── ExtraCredit/
+└── step7 Extra Credit/
     ├── WEBHOOK_AGENT.md     ← Trigger an agent from any external event (no chat required)
     ├── webhook-agent.json   ← N8N workflow for the webhook agent
     └── MCP_SCANNER.md       ← Scan MCP servers for security threats

@@ -1,16 +1,16 @@
-# Step 2 — Replace News with Meraki MCP
+# Step 2 — Add Meraki MCP + Update Agent Persona
 
-**Goal:** Understand what MCP is and why it is more powerful than a single hard-coded tool. Replace the RSS news tool with a Meraki MCP server.
+**Goal:** Replace the news tool with Meraki MCP, and immediately update the agent persona to a network engineering assistant — so the agent's identity and toolset are aligned from the start.
 
 ---
 
-## Background: What is MCP?
+## Background: Two Changes, One Step
 
-In Step 1, the agent used two hard-coded tools:
-- `Get Weather` — a single HTTP call to one specific API with a fixed schema
-- `Get News` — a single RSS reader that fetches from pre-defined feeds
+In Step 1 the agent had an identity mismatch waiting to happen: a "friendly demo bot" with weather and news tools. This step fixes both problems at once.
 
-**Model Context Protocol (MCP)** takes a different approach. An MCP server is a remote service that *advertises* a collection of tools. When the agent connects to an MCP server, it can discover all available tools dynamically and pick the right one at runtime.
+**Part 1 — What is MCP?**
+
+The news tool in Step 1 was hard-coded: one RSS feed reader with a fixed set of URLs. **Model Context Protocol (MCP)** is different — an MCP server advertises a whole collection of tools and the agent discovers which one to use at runtime.
 
 ```
 Hard-coded tool:   Agent ──► [One fixed API call]
@@ -23,7 +23,18 @@ MCP server:        Agent ──► [MCP Client] ──► MCP Server
                                                └── tool_N: (nearly 900 Meraki endpoints)
 ```
 
-The Meraki MCP server used in this workshop wraps the entire Meraki Dashboard API (~900 endpoints) and makes all of them available to the agent as tools.
+The Meraki MCP server wraps the entire Meraki Dashboard API and makes all of it available to the agent as discoverable tools.
+
+**Part 2 — Why the Persona Matters**
+
+The LLM is a general-purpose model. The **system prompt** (agent persona) transforms it into a specialist — like a job description. The same model with a weather-bot persona behaves very differently from one with a network-engineer persona:
+
+```
+Persona: "Friendly n8n demo bot"         ──► Enthusiastic, broad, casual
+Persona: "Network engineering assistant" ──► Concise, factual, cites sources
+```
+
+Changing the persona is free and instant — no retraining, no new model. It is one of the highest-leverage changes you can make to an agent.
 
 ---
 
@@ -31,10 +42,40 @@ The Meraki MCP server used in this workshop wraps the entire Meraki Dashboard AP
 
 | Before (Step 1) | After (Step 2) |
 |---|---|
-| `Get News` (RSS feed tool) | `Meraki MCP Client` |
-| `Get Weather` (HTTP tool) | `Get Weather` (unchanged) |
+| `Get News` RSS tool | `Meraki MCP Client` |
+| `Get Weather` HTTP tool | `Get Weather` (unchanged — removed in Step 3) |
+| Persona: friendly n8n demo bot | Persona: concise network engineering assistant |
+| No citation rules | Always cites API calls used |
+| No default network IDs | Knows default org ID and network ID |
 
-The agent persona stays the same for now — that changes in Step 3.
+Note: the weather tool stays connected for now — this intentional mismatch (a network engineer with a weather tool) motivates Step 3.
+
+---
+
+## The Network Engineering Persona
+
+The system message is updated to:
+
+```
+# Network Agent
+
+## Role
+You are a concise, factual network engineering assistant with access to these tools:
+* Meraki (Network Management Platform)
+* Weather (open-meteo.com)
+
+## Behavior
+* On the first message only, greet the user and say you can assist with network operations.
+* Never invent information. Only use content found in the tools.
+* Be efficient. Gather only the data needed to answer the question.
+* When calling Meraki MCP tools, default to:
+    organization ID: 3705899543372497758
+    network ID: L_3705899543372507602
+
+## Answer Format
+* Use bullet points or short paragraphs.
+* Include a section "Sources checked:" listing the API calls used.
+```
 
 ---
 
@@ -45,87 +86,84 @@ The agent persona stays the same for now — that changes in Step 3.
 1. In the workshop N8N instance, create a new workflow.
 2. Import `workflow.json` from this folder.
 3. If prompted about a missing credential, select the pre-configured shared credential from the dropdown.
-4. The `Meraki MCP Client` node requires no authentication in this workshop environment.
+4. The `Meraki MCP Client` requires no authentication in this workshop environment.
 5. Save and Activate.
 
 ### Option B — Modify Your Step 1 Workflow Manually
 
-This teaches you how to edit a workflow in place.
+**Part 1 — Replace the News tool with Meraki MCP:**
 
-**Remove the News tool:**
-1. Click the `Get News` node on the canvas.
-2. Press **Delete** (or right-click → Delete).
-3. The wire to the agent is automatically removed.
+1. Click the `Get News` node on the canvas and press **Delete**.
+2. Click **"+"** under the agent's **Tools** input connector.
+3. Search for **MCP Client Tool** and select it.
+4. Set **MCP Endpoint URL** to `https://selent-mcp-selent-mcp.apps.rcdnailab01.ciscoailabs.com/mcp`
+5. Connect the new node → Agent's **Tools** input.
 
-**Add the Meraki MCP Client:**
-1. Click **"+"** in the canvas (or click the `+` icon under the agent's **Tools** input connector).
-2. Search for **MCP Client Tool** and select it.
-3. In the node settings, set:
-   - **MCP Endpoint URL:** `https://selent-mcp-selent-mcp.apps.rcdnailab01.ciscoailabs.com/mcp`
-   - Leave all other settings as default.
-4. Draw a wire from `Meraki MCP Client` → Agent's **Tools** input.
-5. Save and Activate.
+**Part 2 — Update the agent persona:**
+
+1. Double-click the `Your First AI Agent` node.
+2. Scroll to the **System Message** field.
+3. Replace the entire contents with the network engineering persona shown above.
+4. Save and Activate.
 
 ---
 
 ## Exercises
 
-### Exercise 1 — Ask a Meraki question
+### Exercise 1 — Check the new greeting
+
+Open a fresh chat and type: `Hello`
+
+The agent should now greet you as a network assistant, not as a generic demo bot. This confirms the persona change is working.
+
+### Exercise 2 — Ask a Meraki question and check the format
 
 ```
 What clients are currently connected to my network?
 ```
 
-Watch the execution panel — you will see the agent:
-1. Receive your message
-2. Discover which Meraki tool to call (e.g., `getNetworkClients`)
-3. Call the tool with the correct organization and network IDs
-4. Return a formatted list of clients
+Watch the execution panel — the agent:
+1. Discovers which Meraki tool to call (e.g., `getNetworkClients`)
+2. Calls it with the default org and network IDs from the persona
+3. Returns a formatted list with a **"Sources checked:"** section at the bottom
 
-### Exercise 2 — Mix weather and network data
+The citation format is enforced by the persona — not by the code.
+
+### Exercise 3 — Mix weather and network data
 
 ```
 What is the weather in San Jose today, and how many devices are on my Meraki network?
 ```
 
-The agent will call *both* tools in a single response, demonstrating that it can orchestrate multiple tool calls within one turn.
+The agent answers both parts using two different tools. Notice it still answers the weather question — the tool is connected, so it works. But a "network engineering assistant" answering weather questions feels slightly off. That tension is intentional — it motivates Step 3.
 
-### Exercise 3 — Explore Meraki device data
-
-```
-Show me the firmware versions for all devices on my network.
-```
+### Exercise 4 — Test the "never invent" rule
 
 ```
-What is the status of my Meraki access points?
+What is the historical uptime percentage of my network over the past year?
 ```
 
-### Exercise 4 — Ask something the agent cannot answer
+The agent should say it does not have that data. The persona instructs it to never invent information — verify it complies.
+
+### Exercise 5 — Confirm the news tool is gone
 
 ```
 What are the top tech news stories today?
 ```
 
-Since `Get News` was removed, the agent has no news tool. Observe how it responds — it should acknowledge the limitation rather than hallucinate.
-
----
-
-## What to Notice
-
-- **Tool discovery:** The MCP client automatically discovers all available Meraki tools. You did not need to define them one by one.
-- **Graceful degradation:** Removing a tool makes the agent acknowledge it can't help with that topic, rather than making things up.
-- **Multi-tool calls:** The agent seamlessly combines weather (HTTP tool) and Meraki data (MCP tool) in one answer.
+Without `Get News`, the agent should gracefully decline rather than hallucinate a news summary. This demonstrates that removing a tool immediately constrains the agent's scope.
 
 ---
 
 ## Key Takeaways
 
-- MCP servers expose many tools through a single connection point, making agents far more capable without extra wiring.
-- The agent still has an identity crisis — it is still a "friendly n8n demo agent" trying to answer Meraki questions. That gets fixed in Step 3.
-- Mixing unrelated tools (weather + network) works, but it can confuse the agent's focus. That gets fixed in Step 4.
+- MCP servers expose many tools through a single connection point — no need to define them one by one.
+- The system prompt (persona) is the fastest, cheapest way to change agent behavior — same model, instant transformation.
+- Good personas include: role, behavioral rules, output format, and relevant default context (like org/network IDs).
+- The agent's identity and toolset should match. Right now they mostly do — except for the weather tool, which gets removed in Step 3.
 
 ---
 
 ## Next Step
 
-Proceed to [Step 3](../step3/Step3-README.md) — Change the agent persona to a network engineering assistant.
+Proceed to [Step 3](../step3/Step3-README.md) — Remove the weather tool and focus the agent on Meraki only.

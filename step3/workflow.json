@@ -1,10 +1,10 @@
 {
-  "name": "Step 3 — Network Engineer Persona + Meraki MCP",
+  "name": "Step 3 — Meraki-Only Network Assistant",
   "nodes": [
     {
       "parameters": {
-        "content": "## Step 3: Change the Agent Persona\n\n**What changed from Step 2:**\n- ✅ Updated: Agent persona → Network Engineering Assistant\n- Tools remain the same (Weather + Meraki MCP)\n\n**Why does this matter?**\nThe LLM is the same model. The tools are the same tools. But the *system prompt* now tells the agent:\n- It is a concise, factual network engineering assistant\n- It should never invent information\n- It should always cite which API calls it used\n- It knows the default org and network IDs for Meraki\n\n**Try asking:**\n- \"What clients are connected to my network?\"\n- \"What is the weather in San Jose?\" (still works — tool is still connected)\n- \"Summarize the status of my network in bullet points\"\n\nNotice how the tone and format of answers change compared to Step 2.",
-        "height": 480,
+        "content": "## Step 4: Focus the Agent — Meraki Only\n\n**What changed from Step 3:**\n- ❌ Removed: `Get Weather` tool\n- ✅ Agent now has exactly ONE tool: Meraki MCP Client\n\n**Why does this matter?**\nToo many tools reduce agent accuracy. When the LLM must choose from a large, unrelated toolset, it:\n- Wastes tokens evaluating irrelevant tools\n- Occasionally picks the wrong tool\n- Produces less predictable outputs\n\nA focused toolset keeps the agent on-task, fast, and reliable.\n\n**Try asking:**\n- \"What clients are on my network?\"\n- \"Show device status for all access points\"\n- \"What is the weather today?\" ← should now gracefully decline\n- \"List recent config changes in Meraki\"\n\n**This is your production-ready Meraki assistant.**\nStep 5 (optional) adds ThousandEyes for cross-domain correlation.",
+        "height": 500,
         "width": 420,
         "color": 7
       },
@@ -16,7 +16,7 @@
     },
     {
       "parameters": {
-        "content": "\n\n\n\n\n\n\n\n\n\n\n\n\n\nThis node helps your agent remember the last few messages to stay on topic.",
+        "content": "## Memory\n\n\n\n\n\n\n\n\n\n\n\nAllows agent to store the last few messages in memory to stay on topic. Larger memory allows for longer connected conversations but will consume more tokens.",
         "height": 372,
         "width": 308,
         "color": 7
@@ -29,7 +29,7 @@
     },
     {
       "parameters": {
-        "content": "## Tools\n\n**Get Weather** — still connected from Step 2. The agent persona now feels slightly mismatched — a network engineer answering weather questions. This tension is intentional and gets resolved in Step 4.\n\n**Meraki MCP Client** — full Meraki Dashboard API access. The network persona knows how to use this properly.",
+        "content": "## Meraki MCP Client\n\n\n\n\n\n\nThe only tool connected to this agent.\n\nThe Meraki MCP Server exposes the full Meraki Dashboard API (~900 endpoints) as agent tools. Examples:\n- `getNetworkClients` — list connected clients\n- `getOrganizationDevicesStatuses` — device health\n- `getNetworkAlertsHistory` — recent alerts\n- `getNetworkConfigurationChanges` — audit log\n\nThis demo uses Selent-AI's open-sourced Meraki MCP wrapper:\nhttps://github.com/selent-ai/selent-mcp",
         "height": 480,
         "width": 480,
         "color": 7
@@ -42,50 +42,9 @@
     },
     {
       "parameters": {
-        "toolDescription": "Get weather forecast anywhere, anytime. You can make requests by assuming most information, the only thing you need is the location (use the city name to infer lat and long automatically) and time period (assume today if not specified)",
-        "url": "https://api.open-meteo.com/v1/forecast",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "latitude",
-              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters0_Value', `Latitude of the location, e.g. 45.75 for Lyon. Do not ask the user just infer it automatically.`, 'string') }}"
-            },
-            {
-              "name": "longitude",
-              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters1_Value', `Longitude of the location, e.g. 4.85 for Lyon. Do not ask the user just infer it automatically.`, 'string') }}"
-            },
-            {
-              "name": "current",
-              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters2_Value', `Comma-separated list of current weather variables (no whitespace).\n\nOptions: temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,weathercode,cloudcover_total,pressure_msl,surface_pressure,windspeed_10m,winddirection_10m,windgusts_10m.`, 'string') }}"
-            },
-            {
-              "name": "hourly",
-              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters3_Value', `Comma-separated list of hourly weather variables (no whitespace).\n\nOptions: temperature_2m,relative_humidity_2m,dewpoint_2m,apparent_temperature,precipitation,rain,showers,snowfall,snow_depth,pressure_msl,surface_pressure,cloudcover_total,windspeed_10m,winddirection_10m,windgusts_10m,visibility,is_day.`, 'string') }}"
-            },
-            {
-              "name": "daily",
-              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters4_Value', `Comma-separated list of daily weather variables (no whitespace).\n\nOptions: weathercode,temperature_2m_max,temperature_2m_min,apparent_temperature_max,apparent_temperature_min,precipitation_sum,rain_sum,windspeed_10m_max.`, 'string') }}"
-            },
-            {
-              "name": "temperature_unit",
-              "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('parameters7_Value', `Unit for temperature. Options: celsius (default), fahrenheit.`, 'string') }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "f1626282-6f3f-4853-b1d6-051e8d0bafc0",
-      "name": "Get Weather",
-      "type": "n8n-nodes-base.httpRequestTool",
-      "position": [1632, 352],
-      "notesInFlow": true,
-      "typeVersion": 4.2
-    },
-    {
-      "parameters": {
         "options": {
-          "systemMessage": "=# Network Agent\n\n## Role\n\nYou are a concise, factual network engineering assistant with access to these tools:\n\n* Meraki (Network Management Platform)\n* Weather (open-meteo.com — may be used if the user needs environmental context)\n\n## Behavior\n\n* On the first message only, greet the user and say you can assist with network operations.\n* Never invent information. Only use content found in the tools.\n* Be efficient. Gather only the data needed to answer the question. Do not make exploratory tool calls.\n* Before making a tool call, check if the answer was already retrieved earlier in this conversation.\n* When calling Meraki MCP tools, default to organization ID 3705899543372497758 and network ID L_3705899543372507602, unless otherwise specified.\n\n## Answer Format\n\n* Use bullet points or short paragraphs.\n* Include a section **\"Sources checked:\"** listing the API calls used.\n\n## Edge Cases\n\n* If you find too little information, say so and suggest adding more data sources to the agent.\n* If the user asks for opinions or predictions, stay neutral and summarize facts only.\n\n## Date\n\nToday is {{ $today }}\n"
+          "systemMessage": "=# Network Agent\n\n## Role\n\nYou are a concise, factual network engineering assistant with access to these tools:\n\n* Meraki (Network Management Platform)\n\n## Behavior\n\n* On the first message only, greet the user and say you can assist with network operations.\n* Never invent information. Only use content found in the tools.\n* Be efficient. Gather only the data needed to answer the question. Do not make exploratory tool calls.\n* Before making a tool call, check if the answer was already retrieved earlier in this conversation.\n* When calling Meraki MCP tools, default to organization ID 3705899543372497758 and network ID L_3705899543372507602, unless otherwise specified.\n\n## Answer Format\n\n* Use bullet points or short paragraphs.\n* Include a section **\"Sources checked:\"** listing the API calls used.\n\n## Edge Cases\n\n* If the user asks about something outside your available tools (e.g. weather, news, external systems), politely say so and suggest they add more data sources to the agent.\n* If you find too little information, say so.\n* If the user asks for opinions or predictions, stay neutral and summarize facts only.\n\n## Date\n\nToday is {{ $today }}\n",
+          "maxIterations": 7
         }
       },
       "id": "45b12d56-5da9-487f-a44d-34b3507eaf7c",
@@ -97,12 +56,12 @@
     {
       "parameters": {
         "public": true,
-        "initialMessages": "Hello! I'm your network engineering assistant. I have access to your Meraki network data. How can I help?",
+        "initialMessages": "Hello! I'm your network engineering assistant. I have access to your Meraki network. How can I help?",
         "options": {
           "inputPlaceholder": "Ask a network question...",
           "showWelcomeScreen": false,
-          "subtitle": "Step 3: Network Engineer Persona",
-          "title": "Network Assistant",
+          "subtitle": "Step 4: Meraki-only, focused toolset",
+          "title": "Meraki Network Assistant",
           "responseMode": "lastNode"
         }
       },
@@ -172,17 +131,6 @@
   ],
   "pinData": {},
   "connections": {
-    "Get Weather": {
-      "ai_tool": [
-        [
-          {
-            "node": "Your First AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Meraki MCP Client": {
       "ai_tool": [
         [

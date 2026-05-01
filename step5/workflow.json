@@ -1,29 +1,102 @@
 {
-  "name": "Step 5 — On-Prem Qwen LLM + All MCP Servers",
+  "name": "Step 5 (Optional) — Meraki + ThousandEyes Network Ops Assistant",
   "nodes": [
     {
       "parameters": {
-        "options": {}
+        "content": "## Network Ops AI Agent\n### Meraki + ThousandEyes\n\n**What changed from Step 4:**\n- ✅ Added: `ThousandEyes MCP Client` — endpoint agent visibility, outages, events\n- ✅ Updated: Agent persona now references both tools\n\n**How it works:**\n1. User sends a chat message\n2. AI Agent processes it using the system prompt\n3. Agent calls Meraki and/or ThousandEyes MCP tools as needed\n4. Response is returned with sources cited\n\n**Example questions:**\n- \"What clients are connected to my network?\"\n- \"Are there any ThousandEyes alerts or outages?\"\n- \"Show me endpoint agent metrics for ADUNSMOO-M-RXMV\"\n- \"Correlate any recent Meraki alerts with ThousandEyes events\"\n- \"What is the network path from my endpoint to the internet?\"",
+        "height": 540,
+        "width": 420,
+        "color": 4
       },
-      "id": "abf77cd5-fdc5-4a0f-b59f-66a86902dcc1",
-      "name": "Chat Trigger",
-      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
-      "typeVersion": 1.1,
-      "position": [-896, 144],
-      "webhookId": "step5-chat-trigger"
+      "id": "bc761a25-f5e4-4f8b-91aa-06a280967f97",
+      "name": "Setup Notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [384, 80],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Memory\n\n\n\n\n\n\n\n\n\n\n\nAllows agent to store the last few messages in memory to stay on topic. Larger memory allows for longer connected conversations but will consume more tokens.",
+        "height": 464,
+        "width": 400,
+        "color": 7
+      },
+      "id": "8f6753a5-f0c3-4106-a6fa-65eb86638976",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [1200, 304],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## LLM Model\n\n\n\n\n\n\n\n\n\n\n\nThe LLM will adopt the persona specified in the system prompt, interpret user messages, determine which MCP tools are needed to gather data, and provide the response.\n\nCan be a cloud service (Claude, GPT, Gemini, etc) or hosted on-prem on a GPU running a local model.",
+        "height": 464,
+        "width": 400,
+        "color": 7
+      },
+      "id": "8d22b411-c073-4724-a7b3-d24fad8fe752",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [816, 304],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## ThousandEyes\nMCP Client\n\n\n\n\n\n\nThe ThousandEyes MCP Server provides access to your enterprise's ThousandEyes data:\n\n* **Core Monitoring**\n  _Get details on tests, events, alerts, and outages_\n\n* **Endpoint Monitoring and Network Path Analysis**\n  _Get endpoint agent tests and metrics_\n\n* **Advanced Analysis**\n  _Get anomalies and metrics_\n\nhttps://docs.thousandeyes.com/product-documentation/integration-guides/thousandeyes-mcp-server\n\n**Selected tools enabled:**\n- get_account_groups\n- search_outages\n- list_events / get_event\n- list_endpoint_agents\n- list_endpoint_agent_tests\n- get_endpoint_agent_metrics",
+        "height": 560,
+        "width": 400,
+        "color": 7
+      },
+      "id": "0006a2e4-700b-481c-8418-9746cc6f32c7",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [1640, 264],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Meraki\nMCP Client\n\n\n\n\n\n\nThe Meraki MCP Server provides access to your enterprise's Meraki environment:\n\nThe entire Meraki API of nearly 900 endpoints is available as tools.\n\nThis demo uses Selent-AI's open-sourced Meraki MCP wrapper:\nhttps://github.com/selent-ai/selent-mcp",
+        "height": 464,
+        "width": 400,
+        "color": 7
+      },
+      "id": "ccb034e4-3196-48b8-b790-26c96b8283b1",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [2080, 304],
+      "typeVersion": 1
     },
     {
       "parameters": {
         "options": {
-          "systemMessage": "=# Network Agent\n\n## Role\n\nYou are a concise, factual network engineering assistant with access to these MCP Servers:\n\n* ThousandEyes (User Endpoint Analytics)\n* Meraki (Campus Network Management Platform)\n* Nexus (Data Center switching management)\n* Intersight (Infrastructure device management for Cisco UCS systems)\n* ITSM (IT Service Management for change control and incident tracking)\n\n## Behavior\n\n* On the first message only, greet the user and say you can assist with network operations.\n* Never invent information. Only use content found in the tools.\n* Be efficient. Gather only the data needed to answer the question. Do not make exploratory tool calls.\n* Before making a tool call, check if the answer was already retrieved earlier in this conversation.\n* When calling any ThousandEyes MCP tool, you MUST always include \"aid\": \"369116\" in every tool call. Never omit this parameter, even if not explicitly requested.\n* When calling Meraki MCP tools, default to organization ID 3705899543372497758 and network ID L_3705899543372507602, unless otherwise specified.\n\n## Answer Format\n\n* Use bullet points or short paragraphs.\n* Include a section **\"Sources checked:\"** listing the API calls used.\n\n## Edge Cases\n\n* If you find too little information, say so and suggest adding more data sources to the agent.\n* If the user asks for opinions or predictions, stay neutral and summarize facts only.\n\n## Date\n\nToday is {{ $today }}\n",
+          "systemMessage": "=# Network Agent\n\n## Role\n\nYou are a concise, factual network engineering assistant with access to these tools:\n\n* ThousandEyes (User Endpoint Analytics)\n* Meraki (Network Management Platform)\n\n## Behavior\n\n* On the first message only, greet the user and say you can assist with network operations.\n* Never invent information. Only use content found in the tools.\n* Be efficient. Gather only the data needed to answer the question. Do not make exploratory tool calls.\n* Before making a tool call, check if the answer was already retrieved earlier in this conversation.\n* When calling any ThousandEyes MCP tool, you MUST always include \"aid\": \"369116\" in every tool call. Never omit this parameter, even if not explicitly requested.\n* When calling Meraki MCP tools, default to organization ID 3705899543372497758 and network ID L_3705899543372507602, unless otherwise specified.\n\n## Answer Format\n\n* Use bullet points or short paragraphs.\n* Include a section **\"Sources checked:\"** listing the API calls used.\n\n## Edge Cases\n\n* If you find too little information, say so and suggest adding more data sources to the agent.\n* If the user asks for opinions or predictions, stay neutral and summarize facts only.\n\n## Date\n\nToday is {{ $today }}\n",
           "maxIterations": 7
         }
       },
       "id": "8e22b1f8-bcde-4530-85a8-8be326444900",
       "name": "AI Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 1.7,
-      "position": [-640, 144]
+      "position": [1440, 144],
+      "typeVersion": 1.7
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hello! I'm your network engineering assistant. I have access to Meraki and ThousandEyes data. How can I help?",
+        "options": {
+          "inputPlaceholder": "Ask a network question...",
+          "showWelcomeScreen": false,
+          "subtitle": "Step 5: Meraki + ThousandEyes",
+          "title": "Network Ops Assistant",
+          "responseMode": "lastNode"
+        }
+      },
+      "id": "abf77cd5-fdc5-4a0f-b59f-66a86902dcc1",
+      "name": "Chat Trigger",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [1120, 144],
+      "webhookId": "step5-chat-trigger",
+      "typeVersion": 1.1
     },
     {
       "parameters": {
@@ -32,112 +105,8 @@
       "id": "c421c7c9-6f59-4007-ad9d-321cc4662081",
       "name": "Window Buffer Memory",
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
-      "typeVersion": 1.3,
-      "position": [-592, 464]
-    },
-    {
-      "parameters": {
-        "content": "## Step 6: On-Prem Qwen LLM + All MCP Servers\n\n**What changed from Step 5:**\n- ✅ Swapped LLM: Claude Haiku → Qwen3.5-9B (on-premise)\n- ✅ Added: Nexus MCP Client (data center switching)\n- ✅ Added: Intersight MCP Client (UCS compute management)\n- ✅ Added: ITSM MCP Client (change + incident management)\n- ✅ Updated: System prompt lists all 5 tools\n\n**Why on-premise?**\nData sent to cloud LLMs (Claude, GPT) leaves your perimeter. For sensitive network operations data, running an LLM on-premises keeps all data inside your infrastructure. Qwen3.5-9B is small enough to run on a single GPU server.\n\n**Tradeoffs:**\n- Smaller context window than cloud models\n- Slower response time (depends on GPU)\n- No external data egress\n- Lower cost at scale\n\n**Example questions:**\n- \"What clients are on the Meraki network?\"\n- \"Show Nexus switch VLAN configuration\"\n- \"What is the firmware status of my UCS servers in Intersight?\"\n- \"Are there any open incidents in ITSM?\"\n- \"Is there a change request scheduled that could explain the current ThousandEyes alert?\"",
-        "height": 736,
-        "width": 380,
-        "color": 4
-      },
-      "id": "bc761a25-f5e4-4f8b-91aa-06a280967f97",
-      "name": "Setup Notes",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [-1536, 112]
-    },
-    {
-      "parameters": {
-        "content": "## LLM Model\n\n\n\n\n\n\n\n\n\n\n\nThe LLM will adopt the persona specified in the system prompt, interpret user messages, determine which MCP tools are needed to gather data, and provide the response.\n\nCan be a cloud service (Claude, GPT, Gemini, etc) or hosted on-prem on a GPU running a local model.\n\n**Step 6: Qwen3.5-9B is the active LLM.**\nThe Anthropic node is kept for reference — reconnect it to compare cloud vs. on-prem behavior.",
-        "height": 464,
-        "width": 400,
-        "color": 7
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [-1200, 384],
-      "typeVersion": 1,
-      "id": "8d22b411-c073-4724-a7b3-d24fad8fe752",
-      "name": "Sticky Note1"
-    },
-    {
-      "parameters": {
-        "content": "## Memory\n\n\n\n\n\n\n\n\n\n\n\nAllows agent to store the last few messages in memory to stay on topic. Larger memory allows for longer connected conversations but will consume more tokens.\n\n**Note:** On-prem models have smaller context windows — keep memory window modest (10–20 messages) to avoid overflowing.",
-        "height": 464,
-        "width": 400,
-        "color": 7
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [-752, 384],
-      "typeVersion": 1,
-      "id": "8f6753a5-f0c3-4106-a6fa-65eb86638976",
-      "name": "Sticky Note5"
-    },
-    {
-      "parameters": {
-        "content": "## ThousandEyes\nMCP Client\n\n\n\n\n\n\nThe ThousandEyes MCP Server provides access to your enterprise's ThousandEyes data:\n\n* **Core Monitoring**\n  _Get details on tests, events, alerts, and outages_\n\n* **Endpoint Monitoring and Network Path Analysis**\n  _Get endpoint agent tests and metrics_\n\n* **Advanced Analysis**\n  _Get anomalies and metrics_\n\nhttps://docs.thousandeyes.com/product-documentation/integration-guides/thousandeyes-mcp-server\n\n**Selected tools enabled:**\n- get_account_groups\n- search_outages\n- list_events / get_event\n- list_endpoint_agents\n- list_endpoint_agent_tests\n- get_endpoint_agent_metrics",
-        "height": 544,
-        "width": 400,
-        "color": 7
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [-304, 384],
-      "typeVersion": 1,
-      "id": "0006a2e4-700b-481c-8418-9746cc6f32c7",
-      "name": "Sticky Note"
-    },
-    {
-      "parameters": {
-        "content": "## Meraki\nMCP Client\n\n\n\n\n\n\nThe Meraki MCP Server provides access to your enterprise's Meraki environment data:\n\nThe entire Meraki API of nearly 900 endpoints is available as tools.\n\nThis demo uses Selent-AI's open-sourced Meraki MCP wrapper:\nhttps://github.com/selent-ai/selent-mcp",
-        "height": 464,
-        "width": 400,
-        "color": 7
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [112, 384],
-      "typeVersion": 1,
-      "id": "ccb034e4-3196-48b8-b790-26c96b8283b1",
-      "name": "Sticky Note6"
-    },
-    {
-      "parameters": {
-        "content": "## Nexus\nMCP Client\n\n\n\n\n\n\n\n\n\n\n\nThis MCP Server provides access to Nexus Dashboard — Cisco's data center network management platform.\n\nAdvertised tools:\n\n* **Switch Configuration**\n  _Retrieve current switch configuration including interfaces, VLANs, and routing_\n\n* **VLAN Management**\n  _Manage VLAN configuration, assignments, and trunk settings_\n\n* **Network Topology**\n  _View network topology, device connections, and link status_",
-        "height": 544,
-        "width": 400,
-        "color": 7
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [592, 368],
-      "typeVersion": 1,
-      "id": "a4e08182-e67d-429c-b74d-5a903311abcb",
-      "name": "Sticky Note2"
-    },
-    {
-      "parameters": {
-        "content": "## Intersight\nMCP Client\n\n\n\n\n\n\n\n\n\n\n\nThis MCP Server provides access to Intersight — Cisco's compute management platform for UCS systems.\n\nAdvertised tools:\n\n* **Device Inventory**\n  _Retrieve current device inventory including servers, switches, and storage_\n\n* **Firmware Status**\n  _Check firmware versions and update status across all managed devices_\n\n* **Hardware Monitoring**\n  _Get hardware health status, temperatures, and performance metrics_",
-        "height": 560,
-        "width": 400,
-        "color": 7
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [1056, 368],
-      "typeVersion": 1,
-      "id": "4afebb96-9ac9-4578-8ea4-47c83adb651b",
-      "name": "Sticky Note3"
-    },
-    {
-      "parameters": {
-        "content": "## ITSM\nMCP Client\n\n\n\n\n\n\n\n\n\n\n\nThis MCP Server provides access to IT operations and service management.\n\nAdvertised tools:\n\n* **Change Management**\n  _Manage change requests, approvals, and implementation schedules_\n\n* **Incident Management**\n  _Track incident reports, status updates, and resolution progress_\n\n* **IT Knowledge Base**\n  _Access knowledge base articles, procedures, and documentation_",
-        "height": 560,
-        "width": 400,
-        "color": 7
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [1552, 368],
-      "typeVersion": 1,
-      "id": "fc0f2ab9-5bc5-4640-89cc-914083d3acd4",
-      "name": "Sticky Note4"
+      "position": [1312, 464],
+      "typeVersion": 1.3
     },
     {
       "parameters": {
@@ -151,35 +120,13 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
       "typeVersion": 1.3,
-      "position": [-1136, 464],
+      "position": [912, 464],
       "id": "e1542133-623d-4bc1-8dfa-f8a59d54f01f",
-      "name": "Anthropic Chat Model (disconnected — for comparison)",
+      "name": "Anthropic Chat Model",
       "credentials": {
         "anthropicApi": {
           "id": "6KVRuOnqbP7XpCZC",
           "name": "Anthropic account 2"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "value": "Qwen/Qwen3.5-9B",
-          "mode": "id"
-        },
-        "builtInTools": {},
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
-      "typeVersion": 1.3,
-      "position": [-976, 464],
-      "id": "6282274d-1a12-43ba-8116-64477c99881a",
-      "name": "Qwen3 LLM (on-prem)",
-      "credentials": {
-        "openAiApi": {
-          "id": "7SOlhMkaxpqjctiK",
-          "name": "QWEN"
         }
       }
     },
@@ -201,7 +148,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
       "typeVersion": 1.2,
-      "position": [-80, 400],
+      "position": [1680, 464],
       "id": "4fb761bf-fe5d-4d54-a2d8-15ae2272f4c0",
       "name": "ThousandEyes MCP Client",
       "credentials": {
@@ -218,44 +165,9 @@
       },
       "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
       "typeVersion": 1.2,
-      "position": [304, 400],
+      "position": [2080, 464],
       "id": "f5207e2b-36dc-4d73-9de5-f085090cd6c1",
       "name": "Meraki MCP Client"
-    },
-    {
-      "parameters": {
-        "endpointUrl": "http://mcp-nexus.n8n-lab.svc.cluster.local:8011/mcp",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
-      "typeVersion": 1.2,
-      "position": [832, 400],
-      "id": "5360e8f0-182b-45b1-883c-88d4a09b7c31",
-      "name": "Nexus MCP Client"
-    },
-    {
-      "parameters": {
-        "endpointUrl": "http://mcp-intersight.n8n-lab.svc.cluster.local:8010/mcp",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
-      "typeVersion": 1.2,
-      "position": [1328, 400],
-      "id": "0fd7c726-c162-47fc-8c15-cb8f85fffa05",
-      "name": "Intersight MCP Client"
-    },
-    {
-      "parameters": {
-        "endpointUrl": "http://mcp-itsm.n8n-lab.svc.cluster.local:8012/mcp",
-        "options": {
-          "timeout": 60000
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
-      "typeVersion": 1.2,
-      "position": [1824, 384],
-      "id": "9c9a6c02-6643-467f-b389-4d645684b106",
-      "name": "ITSM MCP Client"
     }
   ],
   "pinData": {},
@@ -282,7 +194,7 @@
         ]
       ]
     },
-    "Qwen3 LLM (on-prem)": {
+    "Anthropic Chat Model": {
       "ai_languageModel": [
         [
           {
@@ -305,39 +217,6 @@
       ]
     },
     "Meraki MCP Client": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Nexus MCP Client": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Intersight MCP Client": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "ITSM MCP Client": {
       "ai_tool": [
         [
           {
