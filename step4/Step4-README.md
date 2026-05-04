@@ -147,6 +147,16 @@ Observe differences in:
 What VLANs are configured on the Nexus switches?
 ```
 
+> **Tool Overload Warning — Watch for Confusion Here**
+>
+> Both Nexus and Intersight expose infrastructure data, and their tool descriptions can overlap (e.g. both may surface device inventory or interface state). When you ask about VLANs, the agent may call Intersight tools instead of — or in addition to — Nexus tools, returning incomplete or irrelevant results.
+>
+> This is a classic example of **tool overload**: when multiple tools cover similar domains, the agent has to guess which one is most relevant. It doesn't always guess correctly.
+>
+> **How to fix it:**
+> - Keep each agent focused — only connect the tools it genuinely needs for its role.
+> - If overlap is unavoidable, describe the distinction explicitly in the agent **Persona (System Message)**. For example: *"Use Nexus for VLAN and switching configuration. Use Intersight only for UCS compute hardware and firmware."* Clear boundaries in the persona dramatically reduce tool confusion.
+
 ```
 Show me the network topology — which devices are connected to which?
 ```

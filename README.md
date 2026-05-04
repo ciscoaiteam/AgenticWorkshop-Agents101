@@ -32,11 +32,11 @@ Bot                                only)       Intersight
 
 | Step                                         | What changes                                                | Learning objective                                              |
 | -------------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------- |
-| [Step 1](step1/Step1-README.md)              | Nothing — explore the baseline                              | Understand the 5 components of an agentic workflow              |
-| [Step 2](step2/Step2-README.md)              | Replace news tool with Meraki MCP + update agent persona    | Understand MCP and how system prompts shape agent behavior      |
-| [Step 3](step3/Step3-README.md)              | Remove weather tool                                         | Understand how focused toolsets improve agent accuracy          |
-| [Step 4](step4/Step4-README.md)              | Swap to Qwen on-prem LLM + add Nexus, Intersight, ITSM MCPs | Understand data privacy tradeoffs and cross-domain ops          |
-| [Step 5](step5/Step5-README.md) *(optional)* | Focused ThousandEyes + Meraki agent                         | Deep-dive into endpoint monitoring and cross-domain correlation |
+| <a href="step1/Step1-README.md" target="_blank">Step 1</a> | Nothing — explore the baseline                              | Understand the 5 components of an agentic workflow              |
+| <a href="step2/Step2-README.md" target="_blank">Step 2</a> | Replace news tool with Meraki MCP + update agent persona    | Understand MCP and how system prompts shape agent behavior      |
+| <a href="step3/Step3-README.md" target="_blank">Step 3</a> | Remove weather tool                                         | Understand how focused toolsets improve agent accuracy          |
+| <a href="step4/Step4-README.md" target="_blank">Step 4</a> | Swap to Qwen on-prem LLM + add Nexus, Intersight, ITSM MCPs | Understand data privacy tradeoffs and cross-domain ops          |
+| <a href="step5/Step5-README.md" target="_blank">Step 5</a> *(optional)* | Focused ThousandEyes + Meraki agent              | Deep-dive into endpoint monitoring and cross-domain correlation |
 
 
 ---
@@ -51,7 +51,7 @@ Bot                                only)       Intersight
 
 ### Step 0b — Import StartHere.json into N8N
 
-1. Open the workshop N8N instance: **[https://n8n.apps.rcdnailab01.ciscoailabs.com/](https://n8n.apps.rcdnailab01.ciscoailabs.com/)**
+1. Open the workshop N8N instance: **<a href="https://n8n.apps.rcdnailab01.ciscoailabs.com/" target="_blank">https://n8n.apps.rcdnailab01.ciscoailabs.com/</a>**
   Log in with the credentials provided by your session proctor.
 2. Click **"+"** to create a new workflow.
 3. In the top-right menu (three dots ⋯), select **"Import from file"**.
@@ -73,7 +73,7 @@ Your session proctor will provide you with an **OpenAI API key**. You need to en
 
 > Once saved, this credential is stored in N8N and automatically available when you import later step workflows — you will not need to re-enter the key for each step.
 
-You are now running your first agentic workflow. Proceed to [Step 1](step1/Step1-README.md) to explore how it works.
+You are now running your first agentic workflow. Proceed to <a href="step1/Step1-README.md" target="_blank">Step 1</a> to explore how it works.
 
 ---
 
@@ -97,7 +97,7 @@ Research and practice consistently show that giving an LLM too many tools increa
 
 ### N8N
 
-- Access to the workshop N8N instance at **[https://n8n.apps.rcdnailab01.ciscoailabs.com/](https://n8n.apps.rcdnailab01.ciscoailabs.com/)** — your session proctor will provide login credentials
+- Access to the workshop N8N instance at **<a href="https://n8n.apps.rcdnailab01.ciscoailabs.com/" target="_blank">https://n8n.apps.rcdnailab01.ciscoailabs.com/</a>** — your session proctor will provide login credentials
 
 ### Credentials
 
@@ -112,6 +112,30 @@ Research and practice consistently show that giving an LLM too many tools increa
 
 
 If a node shows a credential error after import, re-link it using the credential you created in Step 0c, or ask your session proctor for help.
+
+---
+
+## Tips for Using the Chat Window
+
+### Resetting the Chat Session
+
+The chat panel keeps a running conversation history that is sent to the LLM on every turn (this is the **Memory** component). Over time this can cause problems:
+
+- The agent may reference earlier questions that are no longer relevant
+- A previous error or hallucination can pollute subsequent answers
+- Switching steps or changing the system prompt mid-conversation can produce inconsistent behaviour
+
+**When to reset:**
+- Before starting a new exercise or switching to a different step
+- After making changes to the system prompt or toolset
+- Whenever the agent seems confused or is referencing stale context
+
+**How to reset:**
+1. Open the **Chat** panel on the right side of the canvas.
+2. Click the **reset/undo icon** (↺) in the top-right corner of the chat window.
+3. The conversation history is cleared. The agent starts fresh on your next message.
+
+> Resetting the chat does not affect the workflow, nodes, or credentials — it only clears the conversation memory.
 
 ---
 
@@ -150,7 +174,7 @@ Agentic101/
 
 | Assignment                                              | Concept                                                     | Files                                                 |
 | ------------------------------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------- |
-| [Webhook-Triggered Agent](ExtraCredit/WEBHOOK_AGENT.md) | Agents run autonomously from external events, not just chat | `ExtraCredit/WEBHOOK_AGENT.md` + `webhook-agent.json` |
-| [MCP Security Scanner](ExtraCredit/MCP_SCANNER.md)      | Scan MCP servers for prompt injection and tool poisoning    | `ExtraCredit/MCP_SCANNER.md` + `scan-mcps.sh`         |
+| <a href="step6 Extra Credit/WEBHOOK_AGENT.md" target="_blank">Webhook-Triggered Agent</a> | Agents run autonomously from external events, not just chat | `step6 Extra Credit/WEBHOOK_AGENT.md` + `webhook-agent.json` |
+| <a href="step6 Extra Credit/MCP_SCANNER.md" target="_blank">MCP Security Scanner</a>      | Scan MCP servers for prompt injection and tool poisoning    | `step6 Extra Credit/MCP_SCANNER.md` + `scan-mcps.sh`         |
 
 
