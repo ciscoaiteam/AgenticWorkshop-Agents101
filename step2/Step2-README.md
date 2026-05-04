@@ -60,11 +60,11 @@ Note: the weather tool stays connected for now — this intentional mismatch (a 
 
 **Part 1 — Replace the News tool with Meraki MCP:**
 
-1. Click the `Get News` node on the canvas and press **Delete**.
+1. Click the `Get News` node on the canvas and and click the trash can icon to delete the node.
 2. Click **"+"** under the agent's **Tools** input connector.
 3. Search for **MCP Client Tool** and select it.
 4. Under Paramaters, Set **Endpoint URL** to `https://selent-mcp-selent-mcp.apps.rcdnailab01.ciscoailabs.com/mcp`
-5. Connect the new node → Agent's **Tools** input.
+5. There is no save button, simply close the node config menu.
 
 ---
 
@@ -86,8 +86,8 @@ Did it answer quickly? Gracefully? Without further follow-ups? Your agents behav
 
 1. Double-click the `Your First AI Agent` node.
 2. Scroll to the **System Message** field.
-3. Replace the entire contents with the network engineering persona shown above.
-4. Save and Activate.
+3. Replace the entire contents with the network engineering persona shown below.
+4. Close the config menu.
 
 ## The Network Engineering Persona
 
@@ -114,6 +114,12 @@ You are a concise, factual network engineering assistant with access to these to
 * Include a section "Sources checked:" listing the API calls used.
 ```
 
+Try asking the same question again and see what happens:
+
+```
+What devices are currently connected to my network?
+```
+
 ---
 
 ### Setup Option B (If manual edit did not work) — Import the Pre-Built Workflow
@@ -122,7 +128,7 @@ You are a concise, factual network engineering assistant with access to these to
 2. Import `step2-workflow.json` from this folder.
 3. If prompted about a missing credential, select the pre-configured shared credential from the dropdown.
 4. The `Meraki MCP Client` requires no authentication in this workshop environment.
-5. Save and Activate.
+5. Close the node config menu — changes save automatically.
 
 ---
 
@@ -137,7 +143,7 @@ The agent should now greet you as a network assistant, not as a generic demo bot
 ### Exercise 2 — Ask a Meraki question and check the format
 
 ```
-What cameras are currently connected to my network?
+What clients are currently connected to my network?
 ```
 
 Watch the execution panel — the agent:
@@ -148,15 +154,7 @@ Watch the execution panel — the agent:
 
 The citation format is enforced by the persona — not by the code.
 
-### Exercise 3 — Mix weather and network data
-
-```
-What is the weather in San Jose today, and how many devices are on my Meraki network?
-```
-
-The agent answers both parts using two different tools. Notice it still answers the weather question — the tool is connected, so it works. But a "network engineering assistant" answering weather questions feels slightly off. That tension is intentional — it motivates Step 3.
-
-### Exercise 4 — Test the "never invent" rule
+### Exercise 5 — Test the "never invent" rule
 
 ```
 What is the status of device with hostname "LAS-IS-THE-BEST"
@@ -164,7 +162,7 @@ What is the status of device with hostname "LAS-IS-THE-BEST"
 
 The agent should say it does not have that data. The persona instructs it to never invent information — verify it complies.
 
-### Exercise 5 — AI reasoning with network context
+### Exercise 6 — AI reasoning with network context
 
 The point of having an AI agent is to combine what LLMs are good at: Reasoning, summarization, etc. with YOUR network's state. Try:
 

@@ -56,7 +56,7 @@ Bot                                only)       Intersight
 2. Click **"+"** to create a new workflow.
 3. In the top-right menu (three dots ⋯), select **"Import from file"**.
 4. Navigate to the unzipped folder and select `**StartHere.json`**.
-5. Click **Save**.
+5. Close the node config menu — changes save automatically.
 
 ### Step 0c — Add Your OpenAI API Credential
 
@@ -67,6 +67,7 @@ Your session proctor will provide you with an **OpenAI API key**. You need to en
 3. In the credential form, set:
   - **Name:** `OpenAI account`
   - **API Key:** paste the key provided by your session proctor
+  - Ensure model is gpt-5-mini by going to **Model** -> **From List:** select **gpt-5-mini**
 4. Click **Save** to store the credential.
 5. Close the node panel.
 

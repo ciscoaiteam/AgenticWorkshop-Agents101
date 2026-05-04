@@ -21,14 +21,14 @@ For many enterprise network operations scenarios, this is a concern:
 ## The Tradeoff: Capability vs. Privacy
 
 
-|                       | Cloud LLM (gpt-5-mini)           | On-Prem LLM (Qwen3.5-9B)         |
-| --------------------- | --------------------------------- | -------------------------------- |
-| **Data privacy**      | Data sent to OpenAI               | All data stays on-prem           |
-| **Context window**    | 128K tokens                       | ~8K–32K tokens (model-dependent) |
-| **Response speed**    | Fast (OpenAI's infrastructure)    | Depends on your GPU              |
-| **Reasoning quality** | Higher (larger model)             | Good for focused tasks           |
-| **Cost**              | Per-token API pricing             | Fixed infrastructure cost        |
-| **Model updates**     | Automatic                         | Manual                           |
+|                       | Cloud LLM (gpt-5-mini)         | On-Prem LLM (Qwen3.5-9B)         |
+| --------------------- | ------------------------------ | -------------------------------- |
+| **Data privacy**      | Data sent to OpenAI            | All data stays on-prem           |
+| **Context window**    | 128K tokens                    | ~8K–32K tokens (model-dependent) |
+| **Response speed**    | Fast (OpenAI's infrastructure) | Depends on your GPU              |
+| **Reasoning quality** | Higher (larger model)          | Good for focused tasks           |
+| **Cost**              | Per-token API pricing          | Fixed infrastructure cost        |
+| **Model updates**     | Automatic                      | Manual                           |
 
 
 For focused, domain-specific agents like this network assistant, a smaller 9B-parameter model performs well — especially when the system prompt and toolset are tightly scoped.
@@ -38,11 +38,11 @@ For focused, domain-specific agents like this network assistant, a smaller 9B-pa
 ## What Changes in This Step
 
 
-| Before (Step 3)           | After (Step 4)                                           |
-| ------------------------- | -------------------------------------------------------- |
-| LLM: OpenAI gpt-5-mini (cloud) | LLM: Qwen3.5-9B (on-prem)                          |
-| Tools: Meraki only        | Tools: Meraki + Nexus + Intersight + ITSM + ThousandEyes |
-| Persona: Meraki only      | Persona: 5 tools listed                                  |
+| Before (Step 3)                | After (Step 4)                                           |
+| ------------------------------ | -------------------------------------------------------- |
+| LLM: OpenAI gpt-5-mini (cloud) | LLM: Qwen3.5-9B (on-prem)                                |
+| Tools: Meraki only             | Tools: Meraki + Nexus + Intersight + ITSM + ThousandEyes |
+| Persona: Meraki only           | Persona: 5 tools listed                                  |
 
 
 ---
@@ -64,7 +64,7 @@ For focused, domain-specific agents like this network assistant, a smaller 9B-pa
 2. Import `step4-workflow.json` from this folder.
 3. If prompted about missing credentials, select the pre-configured shared credentials from the dropdown — the **QWEN** credential for the Qwen node and the **OpenAI** credential for the OpenAI node.
 4. The `OpenAI Chat Model` node is kept but disconnected — use it to A/B test responses.
-5. Save and Activate.
+5. Close the node config menu — changes save automatically.
 
 ### What is an OpenAI-Compatible API?
 

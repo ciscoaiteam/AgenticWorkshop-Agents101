@@ -93,7 +93,7 @@ The ThousandEyes API bearer token is **pre-configured** in the workshop environm
 2. Import `step5-workflow.json` from this folder.
 3. If prompted about missing credentials, select the pre-configured shared credentials from the dropdown — the **OpenAI** credential for the LLM node and the **Header Auth** credential for the ThousandEyes MCP Client.
 4. The `Meraki MCP Client` requires no authentication.
-5. Save and Activate.
+5. Close the node config menu — changes save automatically.
 
 **Update the system prompt:**
 
@@ -106,7 +106,7 @@ The ThousandEyes API bearer token is **pre-configured** in the workshop environm
 ```
 
 1. Update the Role section to mention ThousandEyes.
-2. Save.
+2. Close the node config menu — changes save automatically.
 
 ---
 
