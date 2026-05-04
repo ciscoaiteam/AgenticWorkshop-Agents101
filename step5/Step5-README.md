@@ -1,6 +1,12 @@
-# Step 5 (Optional) — Deep Dive: ThousandEyes MCP
+# Step 5 (Optional): ThousandEyes MCP
 
-**Goal:** A focused optional exercise on ThousandEyes endpoint monitoring. Use this step if you want to explore ThousandEyes in depth with a dedicated two-tool agent (Meraki + ThousandEyes only), rather than as part of the full five-MCP setup in Step 5.
+**Goal:** A focused optional exercise on ThousandEyes endpoint monitoring. Use this step if you want to explore ThousandEyes hosted MCP server. Unlike the other MCP servers in this workshop, this MCP service is available outside of Cisco infrastructure. It is useful if you want to experiment with MCP on your own. 
+
+## A note on credentials:
+
+There are no provided ThousandEyes credentials for the purposes of this workshop. SE's should use ThousandEyes credentials from their lab dashboards, or a demo network, if they wish to include ThousandEyes. 
+
+
 
 ---
 
@@ -75,7 +81,11 @@ Selecting a subset of tools keeps the agent focused and avoids token overhead fr
 
 The ThousandEyes API bearer token is **pre-configured** in the workshop environment as a shared Header Auth credential. You do not need to generate your own.
 
-### Option A — Edit Your Step 3 (or Step 4) Workflow Manually
+### Option A — Edit Your Step 4 Workflow Manually
+
+**Remove the Nexus, Intersight, and ITSM servers:**
+
+1. To avoid confusing the agent, disconnect or delete all MCP endpoints other than Meraki. 
 
 **Add the ThousandEyes MCP Client:**
 

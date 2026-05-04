@@ -51,12 +51,14 @@ For focused, domain-specific agents like this network assistant, a smaller 9B-pa
 
 ### Option A — Edit Your Step 3 Workflow Manually
 
-1. In your Step 3 workflow, click **"+"** to add a new node.
+1. In your Step 3 workflow, click **"+"** at the top right or right-click the mouse to add a new node.
 2. Search for **OpenAI Chat Model** (N8N uses this type for any OpenAI-compatible API).
-3. In the node settings, select the pre-configured **QWEN** credential.
-4. Draw a wire from `Qwen3 LLM` → Agent's **AI Language Model** input.
-5. Disconnect the existing OpenAI wire (click it, press Delete).
-6. Keep the OpenAI node on the canvas but unconnected — you will A/B test with it later.
+3. In the node settings, select "Create Credential"
+4. Replace the **Base URL** with this: [https://qwen35-9b.apps.rcdnailab01.ciscoailabs.com/v1](https://qwen35-9b.apps.rcdnailab01.ciscoailabs.com/v1)
+5. Enter anything into the API Key (there is no authorization)
+6. Draw a wire from `Qwen3 LLM` → Agent's **AI Language Model** input.
+7. Disconnect the existing OpenAI wire (click it, press Delete).
+8. Keep the OpenAI node on the canvas but unconnected — you will A/B test with it later.
 
 ### Option B — Import the Pre-Built Workflow
 
@@ -106,6 +108,18 @@ You are a concise, factual network engineering assistant with access to these MC
 * Nexus (Data Center switching management)
 * Intersight (Infrastructure device management for Cisco UCS systems)
 * ITSM (IT Service Management for change control and incident tracking)
+
+## Behavior
+* On the first message only, greet the user and say you can assist with network operations.
+* Never invent information. Only use content found in the tools.
+* Be efficient. Gather only the data needed to answer the question.
+* When calling Meraki MCP tools, default to:
+    organization ID: 3705899543372497758
+    network ID: L_3705899543372507424
+
+## Answer Format
+* Use bullet points or short paragraphs.
+* Include a section "Sources checked:" listing the API calls used.
 ```
 
 ---
