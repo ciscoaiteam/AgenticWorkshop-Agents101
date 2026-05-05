@@ -59,6 +59,7 @@ For focused, domain-specific agents like this network assistant, a smaller 9B-pa
 6. Draw a wire from `Qwen3 LLM` → Agent's **AI Language Model** input.
 7. Disconnect the existing OpenAI wire (click it, press Delete).
 8. Keep the OpenAI node on the canvas but unconnected — you will A/B test with it later.
+9. **Reset the chat session** (↺ button, top-right of the chat panel) so the agent starts fresh with the new LLM.
 
 ### Option B — Import the Pre-Built Workflow
 
@@ -67,6 +68,7 @@ For focused, domain-specific agents like this network assistant, a smaller 9B-pa
 3. If prompted about missing credentials, select the pre-configured shared credentials from the dropdown — the **QWEN** credential for the Qwen node and the **OpenAI** credential for the OpenAI node.
 4. The `OpenAI Chat Model` node is kept but disconnected — use it to A/B test responses.
 5. Close the node config menu — changes save automatically.
+6. **Reset the chat session** (↺ button, top-right of the chat panel) so the agent starts fresh with the new LLM.
 
 ### What is an OpenAI-Compatible API?
 
@@ -154,6 +156,7 @@ What VLANs are configured on the Nexus switches?
 > This is a classic example of **tool overload**: when multiple tools cover similar domains, the agent has to guess which one is most relevant. It doesn't always guess correctly.
 >
 > **How to fix it:**
+>
 > - Keep each agent focused — only connect the tools it genuinely needs for its role.
 > - If overlap is unavoidable, describe the distinction explicitly in the agent **Persona (System Message)**. For example: *"Use Nexus for VLAN and switching configuration. Use Intersight only for UCS compute hardware and firmware."* Clear boundaries in the persona dramatically reduce tool confusion.
 
@@ -208,14 +211,14 @@ Watch the agent orchestrate calls across multiple MCP servers and synthesize a c
 1. Ask a complex cross-domain question with Qwen active. Note the response time and quality.
 2. Disconnect Qwen from the agent's LLM input.
 3. Connect the OpenAI Chat Model node to the agent's LLM input.
-4. Ask the same question.
-5. Discuss: for this type of structured, tool-based network ops query, how much quality difference is there? Is the privacy benefit of Qwen worth the capability tradeoff?
+4. **Reset the chat session** (↺ button, top-right of the chat panel) so the LLM swap doesn't bleed into the comparison.
+5. Ask the same question.
 
 ---
 
 ## Why More Tools is a Double-Edged Sword
 
-You now have 5 MCP servers connected. This provides enormous capability, but also increases:
+You now have 4 MCP servers connected. This provides enormous capability, but also increases:
 
 - **Token usage:** every tool's description is sent to the LLM on every turn
 - **Latency:** more tools to evaluate before responding

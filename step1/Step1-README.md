@@ -27,7 +27,7 @@ Every agentic workflow has five core components:
 [Your First AI Agent] ◄──── [Any LLM Chat Model]
       │                ◄──── [Conversation Memory]
       │
-      ├── calls ──► [Get Weather]  (open-meteo.com API)
+      ├── calls ──► [Get Weather]  (wttr.in — no API key required)
       └── calls ──► [Get News]     (RSS feed reader)
 ```
 

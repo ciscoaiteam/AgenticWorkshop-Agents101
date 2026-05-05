@@ -44,8 +44,9 @@ In Step 2, the agent had two tools: `Get Weather` and `Meraki MCP Client`. For a
 1. Click the `Get Weather` node on the canvas.
 2. Press **Delete** (or right-click → Delete).
 3. The wire to the agent is automatically removed.
-4. Double-click `Your First AI Agent` → remove the weather tool mention at the top of the the System Message. One line: "* Weather ([open-meteo.com](http://open-meteo.com))".
+4. Double-click `Your First AI Agent` → remove the weather tool mention at the top of the System Message. One line: `* Weather (wttr.in)`.
 5. Close the node config menu — changes save automatically.
+6. **Reset the chat session** (↺ button, top-right of the chat panel) so the agent starts fresh without memory of the weather tool.
 
 ---
 

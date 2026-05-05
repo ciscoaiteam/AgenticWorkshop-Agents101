@@ -64,7 +64,8 @@ Note: the weather tool stays connected for now — this intentional mismatch (a 
 2. Click **"+"** under the agent's **Tools** input connector.
 3. Search for **MCP Client Tool** and select it.
 4. Under Paramaters, Set **Endpoint URL** to `https://selent-mcp-selent-mcp.apps.rcdnailab01.ciscoailabs.com/mcp`
-5. There is no save button, simply close the node config menu.
+5. Close the node config menu — changes save automatically.
+6. **Reset the chat session** (↺ button, top-right of the chat panel) so the agent starts fresh without memory of the old toolset.
 
 ---
 
@@ -99,7 +100,7 @@ Here an is example for an updated system message. We provide the agent with cont
 ## Role
 You are a concise, factual network engineering assistant with access to these tools:
 * Meraki (Network Management Platform)
-* Weather (open-meteo.com)
+* Weather (wttr.in)
 
 ## Behavior
 * On the first message only, greet the user and say you can assist with network operations.
@@ -164,13 +165,27 @@ The agent should say it does not have that data. The persona instructs it to nev
 
 ### Exercise 6 — AI reasoning with network context
 
-The point of having an AI agent is to combine what LLMs are good at: Reasoning, summarization, etc. with YOUR network's state. Try:
+The point of having an AI agent is to combine what LLMs are good at — reasoning, summarization, synthesis — with YOUR network's actual state. Try:
 
 ```
 I need to improve security on this network, what can I do to make it more secure? 
+
+How can I improve my NIST compliance? 
 ```
 
-### We are using gpt-5-mini, which is a lightweight model. It might struggle with this.  Larger models such as GPT-4o or o3 are better at complex reasoning questions, especially when given credentials and tools to explore the environment.
+### **We are using gpt-5-mini, which is a lightweight model. It might struggle with this. Larger models such as Opus or Mythos are better at complex reasoning questions, especially when given credentials and tools to explore the environment.**
+
+#### Optional: Swap to gpt-5 and compare
+
+1. Double-click the `**Any LLM Chat Model`** node.
+2. In the **Model** field, change `gpt-5-mini` to `**gpt-5`**.
+3. Close the node config menu.
+4. Reset the chat session (↺ button, top-right of the chat panel).
+5. Ask the same security question again.
+
+Compare the two responses:
+
+> **Key insight:** The model is just one variable. The agent's tools and persona matter just as much. A sharper model with the same tools and prompt will generally produce more useful, grounded answers — but at higher latency and cost.
 
 ---
 
